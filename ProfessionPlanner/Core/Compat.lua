@@ -106,6 +106,40 @@ function Compat.GetContainerItem(bag, slot)
 end
 
 ---------------------------------------------------------------------------
+-- Item and spell names
+---------------------------------------------------------------------------
+
+-- Returns the item's name, or nil if the client hasn't loaded it (yet).
+function Compat.GetItemName(itemID)
+    if C_Item and C_Item.GetItemNameByID then
+        return C_Item.GetItemNameByID(itemID)
+    end
+    return (GetItemInfo(itemID))
+end
+
+-- Asks the client to load item data from the server (modern clients only).
+-- Older clients load it as a side effect of GetItemInfo.
+function Compat.RequestItem(itemID)
+    if C_Item and C_Item.RequestLoadItemDataByID then
+        C_Item.RequestLoadItemDataByID(itemID)
+    else
+        GetItemInfo(itemID)
+    end
+end
+
+-- Returns the spell's name, or nil if the spell doesn't exist.
+function Compat.GetSpellName(spellID)
+    if C_Spell and C_Spell.GetSpellName then
+        return C_Spell.GetSpellName(spellID)
+    end
+    if C_Spell and C_Spell.GetSpellInfo then
+        local info = C_Spell.GetSpellInfo(spellID)
+        return info and info.name
+    end
+    return (GetSpellInfo(spellID))
+end
+
+---------------------------------------------------------------------------
 -- Professions
 ---------------------------------------------------------------------------
 

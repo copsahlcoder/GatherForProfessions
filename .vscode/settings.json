@@ -28,6 +28,7 @@
         "GetSkillLineInfo",
         "GetContainerNumSlots",
         "GetContainerItemInfo",
-        "GetContainerItemLink"
+        "GetContainerItemLink",
+        "GetSpellInfo"
     ]
 }

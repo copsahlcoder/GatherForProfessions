@@ -10,5 +10,10 @@
 Locale\enUS.lua
 Core\Compat.lua
 Core\Init.lua
+Data\Sources.lua
+Data\Mining.lua
+Data\Blacksmithing.lua
+Data\Tailoring.lua
 Core\Scanner.lua
+Core\Verify.lua
 Core\Commands.lua

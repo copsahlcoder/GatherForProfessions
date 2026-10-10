@@ -6,6 +6,13 @@ local L = ns.L
 -- matching function to the migrations table below.
 ns.DB_VERSION = 1
 
+-- Static data tables, filled by the files in Data/.
+-- Professions[skillLineID] = profession data, Sources[itemID] = material source.
+ns.Data = {
+    Professions = {},
+    Sources = {},
+}
+
 ---------------------------------------------------------------------------
 -- Chat output
 ---------------------------------------------------------------------------

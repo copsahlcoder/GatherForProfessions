@@ -39,6 +39,24 @@ L.NO_PROFESSION_API = "Can't read professions: this client has neither GetProfes
 L.SCAN_UNAVAILABLE_EVENTS = "Events not available in this client: %s"
 L.SKILL_HEADER_COLLAPSED = "A header in your Skills tab is collapsed, so some professions may be missing. Expand all headers and type /gfp scan."
 
+-- Verify
+L.HELP_VERIFY = "  /gfp verify - check item and spell IDs in the data files against the game"
+L.VERIFY_START = "Checking %d items and %d spells, results in %d seconds..."
+L.VERIFY_OK = "All data looks correct."
+L.VERIFY_DONE = "Found %d problem(s). If items show as 'not found', run /gfp verify once more."
+L.VERIFY_ITEM_MISSING = "Item %d (%s): not found in the game."
+L.VERIFY_ITEM_WRONG = "Item %d: data says '%s', game says '%s'."
+L.VERIFY_SPELL_MISSING = "Spell %d (%s): not found in the game."
+L.VERIFY_SPELL_WRONG = "Spell %d: data says '%s', game says '%s'."
+L.VERIFY_NO_SOURCE = "Item %d (used by %s) has no entry in Data/Sources.lua."
+L.VERIFY_NO_RECIPE = "%s route %d-%d uses recipe %d, which is not in its recipes table."
+
+-- Lookup
+L.HELP_LOOKUP = "  /gfp lookup spell|item <from> [to] - show names for a range of IDs"
+L.LOOKUP_USAGE = "Usage: /gfp lookup spell 2735 2750 or /gfp lookup item 2840 (max %d IDs)"
+L.LOOKUP_WAIT = "Loading items, results in %d seconds..."
+L.LOOKUP_LINE = "%s %d: %s"
+
 -- Reset
 L.RESET_USAGE = "Usage: /gfp reset <name> or /gfp reset <name-realm>"
 L.RESET_DONE = "Deleted saved data for %s."

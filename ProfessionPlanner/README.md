@@ -3,7 +3,12 @@
 A WoW Forever (Classic-based, Interface 16001) addon that helps you level
 professions across all characters on your account.
 
-Status: **step a** – character, profession, bag and bank scanning.
+Status: **step b** – scanning (a) and static profession data (b).
+
+> WoW Forever is in **beta**. Leveling data comes from
+> <https://www.wow-professions.com/forever> and stops at 225, because the
+> Artisan routes are not published yet. Mining has no Forever guide yet and
+> uses Classic rules. Anything uncertain is marked `-- TODO: verify`.
 
 ## Installation
 
@@ -39,7 +44,57 @@ Then `/reload` in game picks up your edits.
 | `/gfp scan` | Rescan this character and print a summary |
 | `/gfp plan <profession>` | Print the shopping list (step c) |
 | `/gfp reset <name>` or `<name-realm>` | Delete saved data for a character |
+| `/gfp verify` | Check every item/spell ID in `Data/` against the game |
+| `/gfp lookup spell\|item <from> [to]` | Show the names of a range of IDs (max 50), to find the right ID |
 | `/gfp help` | Show help |
+
+## Adding or fixing data
+
+All static data lives in `Data/` as plain Lua tables with no logic. IDs are what
+count. Names are there for readability, and `/gfp verify` checks them.
+
+### A profession (`Data/<Profession>.lua`)
+
+```lua
+local _, ns = ...
+
+ns.Data.Professions[164] = {            -- skill line ID
+    id = 164, name = "Blacksmithing", beta = true, source = "<guide URL>",
+    tools = { { item = 5956, name = "Blacksmith Hammer" } },
+    trainers = {
+        { rank = "Journeyman", maxSkill = 150, minSkill = 50, minLevel = 10,
+          cost = nil,                   -- copper, nil = unknown
+          horde = { "Snarl (Orgrimmar)" }, alliance = { "Therum Deepforge (Stormwind)" } },
+    },
+    recipes = {
+        [2660] = {                      -- spellID
+            name = "Rough Sharpening Stone",   -- spell name as shown in game
+            item = 2862, count = 1,            -- what it makes
+            reagents = { { 2835, 1 } },        -- { itemID, amount }
+            learn = "trainer",                 -- trainer / vendor / drop / quest
+            -- optional: minSkill, skill = { orange, yellow, green, gray }, note
+        },
+    },
+    route = {
+        { from = 1, to = 25, recipe = 2660, crafts = 30 },
+        { from = 75, to = 80, recipe = 2666, crafts = 5,
+          alternatives = { { recipe = 7818, crafts = 5 } } },
+        { from = 1, to = 65, gather = { 2770 }, note = "..." },     -- gathering step
+        { from = 225, to = 300, missing = true, note = "..." },    -- no data yet
+    },
+}
+```
+
+Then add the file to `ProfessionPlanner.toc` (after `Data\Sources.lua`), and
+add the profession's English name and ID to `Scanner.PROFESSIONS` if missing.
+
+### A material (`Data/Sources.lua`)
+
+Every reagent needs an entry. The `type` decides the other fields
+(see the comment at the top of the file):
+`node`, `smelt`, `craft`, `mobdrop`, `vendor` or `other`.
+
+After changing data: `/reload`, then `/gfp verify`.
 
 ## Saved data
 

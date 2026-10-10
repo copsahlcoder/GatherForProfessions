@@ -109,6 +109,8 @@ function Commands.PrintHelp()
     ns:Print(L.HELP_SCAN)
     ns:Print(L.HELP_PLAN)
     ns:Print(L.HELP_RESET)
+    ns:Print(L.HELP_VERIFY)
+    ns:Print(L.HELP_LOOKUP)
     ns:Print(L.HELP_HELP)
 end
 
@@ -134,6 +136,10 @@ local function HandleCommand(msg)
         end
     elseif cmd == "reset" then
         Commands.Reset(arg)
+    elseif cmd == "verify" then
+        ns.Verify.Run()
+    elseif cmd == "lookup" then
+        ns.Verify.Lookup(arg)
     elseif cmd == "help" then
         Commands.PrintHelp()
     else
