@@ -34,18 +34,18 @@ ns.Data.Professions[197] = {
     -- Skill colour thresholds are left out on purpose (see Blacksmithing.lua).
     recipes = {
         [2963]  = { name = "Bolt of Linen Cloth",     item = 2996,  count = 1, learn = "trainer", reagents = { { 2589, 2 } } },
-        [8776]  = { name = "Linen Belt",              item = 7026,  count = 1, learn = "trainer", reagents = { { 2996, 1 }, { 2320, 1 } } },  -- TODO: verify item ID
+        [8776]  = { name = "Linen Belt",              item = 7026,  count = 1, learn = "trainer", reagents = { { 2996, 1 }, { 2320, 1 } } },
         [2964]  = { name = "Bolt of Woolen Cloth",    item = 2997,  count = 1, learn = "trainer", reagents = { { 2592, 3 } } },
         [2402]  = { name = "Woolen Cape",             item = 2584,  count = 1, learn = "trainer", reagents = { { 2997, 1 }, { 2321, 1 } } },
         -- The spell says "stitched", the item says "Stitched".
         [3848]  = { name = "Double-stitched Woolen Shoulders", itemName = "Double-Stitched Woolen Shoulders",
                     item = 4314, count = 1, learn = "trainer", reagents = { { 2997, 3 }, { 2321, 2 } } },
         [3839]  = { name = "Bolt of Silk Cloth",      item = 4305,  count = 1, learn = "trainer", reagents = { { 4306, 4 } } },
-        [3852]  = { name = "Gloves of Meditation",    item = 4318,  count = 1, learn = "trainer", reagents = { { 2997, 4 }, { 2321, 3 }, { 3383, 1 } } },  -- TODO: verify item ID
+        [3852]  = { name = "Gloves of Meditation",    item = 4318,  count = 1, learn = "trainer", reagents = { { 2997, 4 }, { 2321, 3 }, { 3383, 1 } } },
         [3865]  = { name = "Bolt of Mageweave",       item = 4339,  count = 1, learn = "trainer", reagents = { { 4338, 5 } } },
-        [8791]  = { name = "Crimson Silk Vest",       item = 7058,  count = 1, learn = "trainer", reagents = { { 4305, 4 }, { 2604, 2 }, { 2321, 2 } } },  -- TODO: verify spell/item ID
-        [8799]  = { name = "Crimson Silk Pantaloons", item = 7062,  count = 1, learn = "trainer", reagents = { { 4305, 4 }, { 2604, 2 }, { 4291, 2 } } },  -- TODO: verify spell/item ID
-        [12053] = { name = "Black Mageweave Gloves",  item = 10003, count = 1, learn = "trainer", reagents = { { 4339, 2 }, { 8343, 2 } } },  -- TODO: verify spell/item ID
+        [8791]  = { name = "Crimson Silk Vest",       item = 7058,  count = 1, learn = "trainer", reagents = { { 4305, 4 }, { 2604, 2 }, { 2321, 2 } } },
+        [8799]  = { name = "Crimson Silk Pantaloons", item = 7062,  count = 1, learn = "trainer", reagents = { { 4305, 4 }, { 2604, 2 }, { 4291, 2 } } },
+        [12053] = { name = "Black Mageweave Gloves",  item = 10003, count = 1, learn = "trainer", reagents = { { 4339, 2 }, { 8343, 2 } } },
         [12065] = { name = "Mageweave Bag",           item = 10050, count = 1, learn = "trainer", reagents = { { 4339, 4 }, { 4291, 2 } } },
     },
 

@@ -40,20 +40,20 @@ ns.Data.Professions[164] = {
         [2660]  = { name = "Rough Sharpening Stone",  item = 2862, count = 1, learn = "trainer", reagents = { { 2835, 1 } } },
         [3320]  = { name = "Rough Grinding Stone",    item = 3470, count = 1, learn = "trainer", reagents = { { 2835, 2 } } },
         [3326]  = { name = "Coarse Grinding Stone",   item = 3478, count = 1, learn = "trainer", reagents = { { 2836, 2 } } },
-        [3323]  = { name = "Runed Copper Gauntlets",  item = 3472, count = 1, learn = "trainer", reagents = { { 2840, 8 }, { 3470, 2 } } },  -- TODO: verify spell/item ID
-        [2666]  = { name = "Runed Copper Belt",       item = 2857, count = 1, learn = "trainer", reagents = { { 2840, 10 } } },  -- TODO: verify spell/item ID
+        [3323]  = { name = "Runed Copper Gauntlets",  item = 3472, count = 1, learn = "trainer", reagents = { { 2840, 8 }, { 3470, 2 } } },
+        [2666]  = { name = "Runed Copper Belt",       item = 2857, count = 1, learn = "trainer", reagents = { { 2840, 10 } } },
         [7818]  = { name = "Silver Rod",              item = 6338, count = 1, learn = "trainer", reagents = { { 2842, 1 }, { 3470, 2 } } },
-        [2668]  = { name = "Rough Bronze Leggings",   item = 2865, count = 1, learn = "trainer", reagents = { { 2841, 6 } } },  -- TODO: verify spell/item ID
-        [2672]  = { name = "Patterned Bronze Bracers", item = 2868, count = 1, learn = "trainer", reagents = { { 2841, 5 }, { 3478, 2 } } },  -- TODO: verify spell/item ID
+        [2668]  = { name = "Rough Bronze Leggings",   item = 2865, count = 1, learn = "trainer", reagents = { { 2841, 6 } } },
+        [2672]  = { name = "Patterned Bronze Bracers", item = 2868, count = 1, learn = "trainer", reagents = { { 2841, 5 }, { 3478, 2 } } },
         [3337]  = { name = "Heavy Grinding Stone",    item = 3486, count = 1, learn = "trainer", reagents = { { 2838, 3 } } },
-        [2742]  = { name = "Bronze Shortsword",       item = 2850, count = 1, learn = "trainer", reagents = { { 2841, 5 }, { 2880, 4 }, { 2319, 2 } } },  -- TODO: verify spell/item ID
-        [9985]  = { name = "Bronze Warhammer",        item = 7956, count = 1, learn = "trainer", reagents = { { 2841, 8 }, { 3466, 1 }, { 2319, 1 } } },  -- TODO: verify spell/item ID
-        [3501]  = { name = "Green Iron Bracers",      item = 3835, count = 1, learn = "trainer", reagents = { { 3575, 6 }, { 2605, 1 } } },  -- TODO: verify spell/item ID
+        [2742]  = { name = "Bronze Shortsword",       item = 2850, count = 1, learn = "trainer", reagents = { { 2841, 5 }, { 2880, 4 }, { 2319, 2 } } },
+        [9985]  = { name = "Bronze Warhammer",        item = 7956, count = 1, learn = "trainer", reagents = { { 2841, 8 }, { 3466, 1 }, { 2319, 1 } } },
+        [3501]  = { name = "Green Iron Bracers",      item = 3835, count = 1, learn = "trainer", reagents = { { 3575, 6 }, { 2605, 1 } } },
         [9920]  = { name = "Solid Grinding Stone",    item = 7966, count = 1, learn = "trainer", reagents = { { 7912, 4 } } },
-        [7223]  = { name = "Golden Scale Bracers",    item = 6040, count = 1, learn = "trainer", reagents = { { 3859, 5 }, { 3486, 2 } } },  -- TODO: verify spell/item ID
-        [9928]  = { name = "Heavy Mithril Gauntlet",  item = 7919, count = 1, learn = "trainer", reagents = { { 3860, 6 }, { 4338, 4 } } },  -- TODO: verify spell/item ID
-        [9926]  = { name = "Heavy Mithril Shoulder",  item = 7918, count = 1, learn = "trainer", reagents = { { 3860, 8 }, { 4234, 6 } } },  -- TODO: verify spell/item ID
-        [9935]  = { name = "Steel Plate Helm",        item = 7922, count = 1, learn = "trainer", reagents = { { 3859, 14 }, { 7966, 1 } } },  -- TODO: verify spell/item ID
+        [7223]  = { name = "Golden Scale Bracers",    item = 6040, count = 1, learn = "trainer", reagents = { { 3859, 5 }, { 3486, 2 } } },
+        [9928]  = { name = "Heavy Mithril Gauntlet",  item = 7919, count = 1, learn = "trainer", reagents = { { 3860, 6 }, { 4338, 4 } } },
+        [9926]  = { name = "Heavy Mithril Shoulder",  item = 7918, count = 1, learn = "trainer", reagents = { { 3860, 8 }, { 4234, 6 } } },
+        [9935]  = { name = "Steel Plate Helm",        item = 7922, count = 1, learn = "trainer", reagents = { { 3859, 14 }, { 7966, 1 } } },
         [9964]  = { name = "Mithril Spurs",           item = 7969, count = 1, learn = "drop", note = "World drop plan, check the Auction House.",
                     reagents = { { 3860, 4 }, { 7966, 3 } } },
     },
