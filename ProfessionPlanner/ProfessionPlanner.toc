@@ -1,0 +1,14 @@
+## Interface: 16001
+## Title: ProfessionPlanner
+## Notes: Plan profession leveling across all characters on your account.
+## Author: copsahlcoder
+## Version: 0.1.0
+## SavedVariables: ProfessionPlannerDB
+
+# Load order matters: Locale first (UI text), then Compat (API wrappers),
+# then Init (namespace, events, database), then the modules that use them.
+Locale\enUS.lua
+Core\Compat.lua
+Core\Init.lua
+Core\Scanner.lua
+Core\Commands.lua
