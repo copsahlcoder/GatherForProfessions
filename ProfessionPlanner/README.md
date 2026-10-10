@@ -38,6 +38,23 @@ this deletes only the link, not your files.
 
 Then `/reload` in game picks up your edits.
 
+### For testers (from a zip)
+
+1. Download `ProfessionPlanner-<version>.zip` (GitHub → Releases).
+2. Unzip it into `<WoW Forever install>\Interface\AddOns\`. You should end up
+   with `AddOns\ProfessionPlanner\ProfessionPlanner.toc`.
+3. Start the game. On the character screen, open AddOns and make sure
+   ProfessionPlanner is ticked (tick "Load out of date AddOns" if needed).
+4. Log in on each character once and open the bank once, so the addon
+   learns what everyone has. Then type `/gfp`.
+
+### Making a release zip
+
+1. Raise `## Version:` in `ProfessionPlanner.toc` (e.g. 0.1.0 → 0.2.0).
+2. From the repo root run:
+   `powershell -ExecutionPolicy Bypass -File scripts\package.ps1`
+3. The zip is in `dist\` (not committed to git). Upload it to a GitHub release.
+
 ## Commands
 
 | Command | What it does |
