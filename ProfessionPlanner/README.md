@@ -8,7 +8,8 @@ with `/gfp plan` (c).
 
 > WoW Forever is in **beta**. Leveling data comes from
 > <https://www.wow-professions.com/forever> and stops at 225, because the
-> Artisan routes are not published yet. Mining has no Forever guide yet and
+> Artisan routes are not published yet. Professions with data: Mining,
+> Blacksmithing, Tailoring and Leatherworking. Mining has no Forever guide yet and
 > uses Classic rules. Anything uncertain is marked `-- TODO: verify`.
 
 ## Installation

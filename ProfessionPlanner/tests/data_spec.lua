@@ -8,17 +8,19 @@ local LoadFile = LoadAddonFile or function(path, ns)
 end
 
 local ns = { Data = { Professions = {}, Sources = {} } }
-for _, file in ipairs({ "Data/Sources.lua", "Data/Mining.lua", "Data/Blacksmithing.lua", "Data/Tailoring.lua" }) do
+for _, file in ipairs({ "Data/Sources.lua", "Data/Mining.lua", "Data/Blacksmithing.lua",
+                        "Data/Tailoring.lua", "Data/Leatherworking.lua" }) do
     LoadFile(file, ns)
 end
 LoadFile("Core/Calculator.lua", ns)
 local Data, Calculator = ns.Data, ns.Calculator
 
 describe("Data files", function()
-    it("load Mining, Blacksmithing and Tailoring", function()
+    it("load Mining, Blacksmithing, Tailoring and Leatherworking", function()
         assert.is_not_nil(Data.Professions[186])
         assert.is_not_nil(Data.Professions[164])
         assert.is_not_nil(Data.Professions[197])
+        assert.is_not_nil(Data.Professions[165])
     end)
 
     for id, prof in pairs(Data.Professions) do
@@ -102,6 +104,26 @@ describe("Plan with real data", function()
     it("Tailoring 1-30 needs 60 Linen Cloth", function()
         local plan = Calculator.Plan(Data, Data.Professions[197], 1, 30, empty)
         assert.are.equal(60, plan.items[2589].missing)
+    end)
+
+    it("Leatherworking 1-130 matches the guide", function()
+        local plan = Calculator.Plan(Data, Data.Professions[165], 1, 130, empty)
+        assert.are.equal(99, plan.items[2934].missing)   -- Ruined Leather Scraps (guide: ~100)
+        -- Light Leather: 63 + 32 + 114 + 240 = 449 used, 33 made at 1-30 (guide: ~415).
+        assert.are.equal(416, plan.items[2318].missing)
+        assert.are.equal(27, plan.items[783].missing)    -- Light Hide
+        -- Hides and belts made earlier in the route are reused, not bought.
+        assert.are.equal(24, plan.items[4231].fromMade)  -- Cured Light Hide
+        assert.are.equal(10, plan.items[4246].fromMade)  -- Fine Leather Belt
+        assert.are.equal(10, plan.items[4233].fromMade)  -- Cured Medium Hide
+    end)
+
+    it("Leatherworking 130-225 makes the extra Cured Heavy Hide it needs", function()
+        local plan = Calculator.Plan(Data, Data.Professions[165], 130, 225, empty)
+        -- 20 cured at 130-140; 10 + 10 + 26 used later -> 26 more to cure.
+        assert.are.equal(26, plan.items[4236].toCraft)
+        assert.are.equal(46, plan.items[4235].missing)   -- Heavy Hide: 20 + 26
+        assert.are.equal(315, plan.items[4304].missing)  -- Thick Leather (guide: 315)
     end)
 
     it("Mining has gather steps but nothing to buy", function()

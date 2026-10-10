@@ -101,6 +101,11 @@ S[4305] = { name = "Bolt of Silk Cloth",    type = "craft", profession = 197, re
 S[4339] = { name = "Bolt of Mageweave",     type = "craft", profession = 197, recipe = 3865,
             note = "Mageweave is rare on beta; the guide suggests buying bolts on the Auction House." }
 
+S[4231] = { name = "Cured Light Hide",      type = "craft", profession = 165, recipe = 3816 }
+S[4233] = { name = "Cured Medium Hide",     type = "craft", profession = 165, recipe = 3817 }
+S[4236] = { name = "Cured Heavy Hide",      type = "craft", profession = 165, recipe = 3818 }
+S[4246] = { name = "Fine Leather Belt",     type = "craft", profession = 165, recipe = 3763 }
+
 ---------------------------------------------------------------------------
 -- Cloth (drops from humanoid mobs)
 -- TODO: verify level ranges and zones for Forever.
@@ -133,6 +138,8 @@ S[2605] = { name = "Green Dye",            type = "vendor", price = 100,
     vendor = "Horde: Tamar (Orgrimmar), Millie Gregorian (Undercity), Mahu (Thunder Bluff). Alliance: Jillian Tanner (Stormwind), Bombus Finespindle (Ironforge)" }
 S[2880] = { name = "Weak Flux",            type = "vendor", price = 100,  vendor = "Blacksmithing Supplies, next to the trainer in each capital" }
 S[3466] = { name = "Strong Flux",          type = "vendor", price = 2000, vendor = "Blacksmithing Supplies, next to the trainer in each capital" }
+S[4289] = { name = "Salt",                 type = "vendor", price = 50,   vendor = "Leatherworking Supplies, next to most Leatherworking trainers; Tharynn Bouden (Goldshire), Abigail Shiel (Brill)" }
+S[4340] = { name = "Gray Dye",             type = "vendor", price = 35,   vendor = "Leatherworking / Tailoring Supplies" }
 S[3857] = { name = "Coal",                 type = "vendor", price = 500,  vendor = "Blacksmithing Supplies -- TODO: verify" }
 S[5956] = { name = "Blacksmith Hammer",    type = "vendor", price = 16,   vendor = "Blacksmithing / Trade Supplies vendors" }
 S[2901] = { name = "Mining Pick",          type = "vendor", price = 81,   vendor = "Mining Supplies, next to most Mining trainers" }
@@ -141,6 +148,20 @@ S[2901] = { name = "Mining Pick",          type = "vendor", price = 81,   vendor
 -- Other professions / Auction House
 ---------------------------------------------------------------------------
 
-S[2319] = { name = "Medium Leather",   type = "other", note = "Skinning (beasts level 20-30) or Auction House" }
-S[4234] = { name = "Heavy Leather",    type = "other", note = "Skinning (beasts level 30-40) or Auction House" }
+-- Leather and hides. Leatherworking can also make leather from lower leather
+-- (e.g. 4 Light -> 1 Medium), but we keep them as "other" so plans for other
+-- professions don't tell you to make leather from scraps. The Leatherworking
+-- route makes them in its own steps.
+-- TODO: verify skinning level ranges for Forever.
+S[2934] = { name = "Ruined Leather Scraps", type = "other", note = "Skinning (beasts level 1-15) or Auction House" }
+S[2318] = { name = "Light Leather",    type = "other", note = "Skinning (beasts level 1-20) or Auction House" }
+S[783]  = { name = "Light Hide",       type = "other", note = "Skinning (beasts level 1-20) or Auction House" }
+S[2319] = { name = "Medium Leather",   type = "other", note = "Skinning (beasts level 20-30), Leatherworking (4 Light Leather) or Auction House" }
+S[4232] = { name = "Medium Hide",      type = "other", note = "Skinning (beasts level 20-30) or Auction House" }
+S[4234] = { name = "Heavy Leather",    type = "other", note = "Skinning (beasts level 30-40), Leatherworking (5 Medium Leather) or Auction House" }
+S[4235] = { name = "Heavy Hide",       type = "other", note = "Skinning (beasts level 30-40) or Auction House" }
+S[4304] = { name = "Thick Leather",    type = "other", note = "Skinning (beasts level 40-50) or Auction House" }
+
 S[3383] = { name = "Elixir of Wisdom", type = "other", note = "Alchemy or Auction House" }
+S[1206] = { name = "Moss Agate",       type = "other", note = "Mining (Tin and Silver veins) or Auction House" }
+S[7071] = { name = "Iron Buckle",      type = "other", note = "Blacksmithing or Auction House" }
