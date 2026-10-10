@@ -47,7 +47,7 @@ ns.Data.Professions[164] = {
         [2672]  = { name = "Patterned Bronze Bracers", item = 2868, count = 1, learn = "trainer", reagents = { { 2841, 5 }, { 3478, 2 } } },  -- TODO: verify spell/item ID
         [3337]  = { name = "Heavy Grinding Stone",    item = 3486, count = 1, learn = "trainer", reagents = { { 2838, 3 } } },
         [2742]  = { name = "Bronze Shortsword",       item = 2850, count = 1, learn = "trainer", reagents = { { 2841, 5 }, { 2880, 4 }, { 2319, 2 } } },  -- TODO: verify spell/item ID
-        [2741]  = { name = "Bronze Warhammer",        item = 2847, count = 1, learn = "trainer", reagents = { { 2841, 8 }, { 3466, 1 }, { 2319, 1 } } },  -- TODO: verify spell/item ID
+        [9985]  = { name = "Bronze Warhammer",        item = 7956, count = 1, learn = "trainer", reagents = { { 2841, 8 }, { 3466, 1 }, { 2319, 1 } } },  -- TODO: verify spell/item ID
         [3501]  = { name = "Green Iron Bracers",      item = 3835, count = 1, learn = "trainer", reagents = { { 3575, 6 }, { 2605, 1 } } },  -- TODO: verify spell/item ID
         [9920]  = { name = "Solid Grinding Stone",    item = 7966, count = 1, learn = "trainer", reagents = { { 7912, 4 } } },
         [7223]  = { name = "Golden Scale Bracers",    item = 6040, count = 1, learn = "trainer", reagents = { { 3859, 5 }, { 3486, 2 } } },  -- TODO: verify spell/item ID
@@ -71,8 +71,8 @@ ns.Data.Professions[164] = {
         { from = 100, to = 112, recipe = 3337, crafts = 20 },
         { from = 112, to = 125, recipe = 2672, crafts = 13 },
         { from = 125, to = 140, recipe = 2742, crafts = 24 },
-        { from = 140, to = 150, recipe = 2741, crafts = 10 },
-        { from = 150, to = 165, recipe = 2741, crafts = 19 },
+        { from = 140, to = 150, recipe = 9985, crafts = 10 },
+        { from = 150, to = 165, recipe = 9985, crafts = 19 },
         { from = 165, to = 175, recipe = 3501, crafts = 15 },
         { from = 175, to = 185, recipe = 9920, crafts = 40, alternatives = { { recipe = 7223, crafts = 10 } } },
         { from = 185, to = 200, recipe = 9928, crafts = 15, alternatives = { { recipe = 9926, crafts = 15 } } },
