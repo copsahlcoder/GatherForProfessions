@@ -33,6 +33,22 @@ $target = Join-Path $staging "ProfessionPlanner"
 Copy-Item -Recurse $addon $target
 Remove-Item -Recurse -Force (Join-Path $target "tests")
 
+# Safety check: refuse to package files that contain traces of this machine
+# (user name, home folder, absolute Windows paths). The values are read from
+# the machine running the script, so nothing personal is stored here.
+$forbidden = @(
+    [regex]::Escape($env:USERNAME),
+    [regex]::Escape($env:USERPROFILE),
+    "[A-Za-z]:\\Users\\",
+    "Program Files"
+)
+$leaks = Get-ChildItem -Recurse -File $target | Select-String -Pattern $forbidden
+if ($leaks) {
+    Remove-Item -Recurse -Force $staging
+    $leaks | ForEach-Object { Write-Host "  $($_.Path.Substring($staging.Length + 1)):$($_.LineNumber): $($_.Line.Trim())" }
+    throw "Packaging stopped: the files above contain machine-specific paths or names."
+}
+
 if (Test-Path $zip) { Remove-Item -Force $zip }
 
 # Build the zip by hand: Compress-Archive in Windows PowerShell 5.1 writes
