@@ -3,8 +3,8 @@
 A WoW Forever (Classic-based, Interface 16001) addon that helps you level
 professions across all characters on your account.
 
-Status: **step c** – scanning (a), profession data (b) and the calculator
-with `/gfp plan` (c).
+Status: **step d** – scanning (a), profession data (b), the calculator
+with `/gfp plan` (c) and the main window (d).
 
 > WoW Forever is in **beta**. Leveling data comes from
 > <https://www.wow-professions.com/forever> and stops at 225, because the
@@ -42,7 +42,7 @@ Then `/reload` in game picks up your edits.
 
 | Command | What it does |
 | --- | --- |
-| `/gfp` | Open/close the main window (step d) |
+| `/gfp` | Open/close the main window: pick character, profession and target; tabs Plan, Shopping list and Overview |
 | `/gfp scan` | Rescan this character and print a summary |
 | `/gfp plan <profession> [target]` | Print route, trainers, what to make and the shopping list. Target defaults to the next milestone (75/150/225/300) |
 | `/gfp reset <name>` or `<name-realm>` | Delete saved data for a character |

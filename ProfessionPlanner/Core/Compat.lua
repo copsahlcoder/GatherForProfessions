@@ -210,6 +210,29 @@ function Compat.RegisterEvent(frame, event)
 end
 
 ---------------------------------------------------------------------------
+-- UI
+---------------------------------------------------------------------------
+
+-- Creates an unnamed frame with a template. If the template doesn't exist in
+-- this client, falls back to a plain frame instead of breaking the addon.
+function Compat.CreateFrame(frameType, parent, template)
+    local ok, frame = pcall(CreateFrame, frameType, nil, parent, template)
+    if ok and frame then
+        return frame
+    end
+    return CreateFrame(frameType, nil, parent)
+end
+
+-- Colour code for a class, e.g. "ffc69b6d" for WARRIOR. White if unknown.
+function Compat.ClassColorHex(classFile)
+    local color = RAID_CLASS_COLORS and classFile and RAID_CLASS_COLORS[classFile]
+    if color and color.colorStr then
+        return color.colorStr
+    end
+    return "ffffffff"
+end
+
+---------------------------------------------------------------------------
 -- Timers
 ---------------------------------------------------------------------------
 

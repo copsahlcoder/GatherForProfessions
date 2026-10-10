@@ -16,7 +16,10 @@ Data\Blacksmithing.lua
 Data\Tailoring.lua
 Data\Leatherworking.lua
 Core\Calculator.lua
+Core\Planner.lua
 Core\PlanText.lua
 Core\Scanner.lua
 Core\Verify.lua
 Core\Commands.lua
+UI\Widgets.lua
+UI\MainFrame.lua

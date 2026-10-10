@@ -36,6 +36,7 @@
         "it",
         "before_each",
         "LoadAddonFile",
-        "ROOT"
+        "ROOT",
+        "RAID_CLASS_COLORS"
     ]
 }

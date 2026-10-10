@@ -1,24 +1,30 @@
--- Turns a Calculator plan into readable text: used by /gfp plan now,
--- and by the main window later (step d).
+-- Turns a Calculator plan into lines of text. The same lines are printed to
+-- chat by /gfp plan and shown in the main window.
 local addonName, ns = ...
 local L = ns.L
 
 local PlanText = {}
 ns.PlanText = PlanText
 
--- How many zones to show per material, to keep chat lines short.
+-- How many zones to show per material, to keep lines short.
 local MAX_ZONES = 3
+
+-- Colours used in the window and chat.
+local GREY = "|cff808080"
+local YELLOW = "|cffffd100"
+local GREEN = "|cff40ff40"
+local END = "|r"
 
 ---------------------------------------------------------------------------
 -- Small text helpers
 ---------------------------------------------------------------------------
 
--- "Name-Realm" -> "Name". Our own character becomes "you".
+-- "Name-Realm" -> "Name". The character we plan for becomes "you".
 function PlanText.ShortName(key, currentKey)
     if key == currentKey then
         return L.WHO_YOU
     end
-    return string.match(key or "", "^([^-]+)") or key
+    return ns.Planner.DisplayName(key)
 end
 
 -- "Bankalt bank 40, you bags 5"
@@ -58,13 +64,43 @@ function PlanText.Source(source)
     return source.note or L.SOURCE_UNKNOWN
 end
 
+-- " (or Silver Rod x5)" for a route step with alternatives.
+local function AlternativesText(prof, step)
+    local text = ""
+    for _, alt in ipairs(step.alternatives or {}) do
+        local recipe = prof.recipes[alt.recipe]
+        if recipe then
+            text = text .. string.format(L.PLAN_STEP_ALT, recipe.name, alt.crafts)
+        end
+    end
+    return text
+end
+
+-- " [drop]" for recipes that don't come from a trainer.
+local function LearnText(recipe)
+    if recipe.learn and recipe.learn ~= "trainer" then
+        return string.format(L.PLAN_STEP_LEARN, recipe.learn)
+    end
+    return ""
+end
+
 ---------------------------------------------------------------------------
--- Printing a plan to chat
+-- Line builders. Each returns a list of strings (possibly empty).
 ---------------------------------------------------------------------------
 
-local function PrintTrainers(plan, faction)
-    if #plan.trainers == 0 then return end
-    ns:Print(L.PLAN_TRAINERS)
+function PlanText.HeaderLines(plan)
+    local prof = plan.profession
+    local lines = { string.format(L.PLAN_HEADER, prof.name, plan.from, plan.to) }
+    if prof.beta and prof.source then
+        table.insert(lines, string.format(L.PLAN_BETA, prof.source))
+    end
+    return lines
+end
+
+function PlanText.TrainerLines(plan, faction)
+    local lines = {}
+    if #plan.trainers == 0 then return lines end
+    table.insert(lines, L.PLAN_TRAINERS)
     for _, trainer in ipairs(plan.trainers) do
         -- Build "(skill 125, level 20, 50s)" from whatever is known.
         local details = {}
@@ -79,43 +115,87 @@ local function PrintTrainers(plan, faction)
         end
         local detailText = #details > 0 and (" (" .. table.concat(details, ", ") .. ")") or ""
         local where = (faction == "Alliance") and trainer.alliance or trainer.horde
-        ns:Print(L.PLAN_TRAINER, trainer.rank, detailText, table.concat(where or {}, ", "))
+        table.insert(lines, string.format(L.PLAN_TRAINER, trainer.rank, detailText, table.concat(where or {}, ", ")))
     end
+    return lines
 end
 
-local function PrintSteps(plan)
+function PlanText.ToolLines(plan)
+    local lines = {}
+    for _, tool in ipairs(plan.tools) do
+        if not tool.have then
+            table.insert(lines, string.format(L.PLAN_TOOL_MISSING, tool.name))
+        end
+    end
+    return lines
+end
+
+-- The remaining route steps (used by /gfp plan).
+function PlanText.StepLines(plan)
     local prof = plan.profession
-    ns:Print(L.PLAN_STEPS)
+    local lines = { L.PLAN_STEPS }
     for _, entry in ipairs(plan.steps) do
         local step = entry.step
         if step.missing then
-            ns:Print(L.PLAN_STEP_MISSING, entry.from, entry.to, step.note or "")
+            table.insert(lines, string.format(L.PLAN_STEP_MISSING, entry.from, entry.to, step.note or ""))
         elseif step.gather then
             local names = {}
             for _, itemID in ipairs(step.gather) do
                 table.insert(names, ns.Calculator.GetItemName(ns.Data, itemID))
             end
-            ns:Print(L.PLAN_STEP_GATHER, entry.from, entry.to, table.concat(names, ", "), step.note or "")
+            table.insert(lines, string.format(L.PLAN_STEP_GATHER, entry.from, entry.to, table.concat(names, ", "), step.note or ""))
         elseif entry.recipe then
-            local extra = ""
-            if entry.recipe.learn and entry.recipe.learn ~= "trainer" then
-                extra = string.format(L.PLAN_STEP_LEARN, entry.recipe.learn)
-            end
-            for _, alt in ipairs(step.alternatives or {}) do
-                local altRecipe = prof.recipes[alt.recipe]
-                if altRecipe then
-                    extra = extra .. string.format(L.PLAN_STEP_ALT, altRecipe.name, alt.crafts)
-                end
-            end
-            ns:Print(L.PLAN_STEP_CRAFT, entry.from, entry.to, entry.recipe.name, entry.crafts, extra)
+            local extra = LearnText(entry.recipe) .. AlternativesText(prof, step)
+            table.insert(lines, string.format(L.PLAN_STEP_CRAFT, entry.from, entry.to, entry.recipe.name, entry.crafts, extra))
         end
     end
+    return lines
 end
 
--- Intermediate items to make, with a warning if the character's skill is too low.
-local function PrintCrafting(plan, char)
-    if #plan.crafting == 0 then return end
-    ns:Print(L.PLAN_CRAFTING)
+-- The whole route up to the target, with done / current / upcoming
+-- marked by colour (used by the Plan tab).
+function PlanText.ProgressLines(prof, current, target)
+    local lines = { L.PLAN_STEPS }
+    for _, step in ipairs(prof.route) do
+        if step.from >= target then break end
+        local recipe = step.recipe and prof.recipes[step.recipe]
+        local what
+        if step.missing then
+            what = L.UI_STEP_MISSING
+        elseif step.gather then
+            what = step.note or ""
+        elseif recipe then
+            what = string.format(L.UI_STEP_RECIPE, recipe.name, step.crafts or 0) .. LearnText(recipe) .. AlternativesText(prof, step)
+        else
+            what = ""
+        end
+
+        local range = string.format(L.UI_STEP_RANGE, step.from, step.to)
+        if step.to <= current then
+            table.insert(lines, GREY .. L.UI_STEP_INDENT .. range .. what .. END)
+        elseif step.from <= current then
+            local left = ""
+            if recipe and step.crafts then
+                local crafts = ns.Calculator.CraftsForStep(step, current, math.min(step.to, target))
+                left = string.format(L.UI_STEP_LEFT, crafts)
+            end
+            table.insert(lines, YELLOW .. L.UI_STEP_NOW .. range .. what .. left .. END)
+        else
+            table.insert(lines, L.UI_STEP_INDENT .. range .. what)
+        end
+        -- Notes for steps still ahead (gather steps already show the note).
+        if step.note and not step.gather and step.to > current then
+            table.insert(lines, GREY .. "      " .. step.note .. END)
+        end
+    end
+    return lines
+end
+
+-- Intermediate items to make, with a warning if the skill is too low.
+function PlanText.CraftingLines(plan, char)
+    local lines = {}
+    if #plan.crafting == 0 then return lines end
+    table.insert(lines, L.PLAN_CRAFTING)
     for _, item in ipairs(plan.crafting) do
         local recipe, prof = item.recipe, item.recipeProfession
         local known = char.professions and char.professions[prof.id]
@@ -128,46 +208,63 @@ local function PrintCrafting(plan, char)
         if not known or known.rank < (recipe.minSkill or 1) then
             warning = string.format(L.PLAN_CRAFT_SKILL_LOW, prof.name, known and known.rank or 0)
         end
-        ns:Print(L.PLAN_CRAFT_LINE, item.toCraft, item.name, recipe.name, requirement, warning)
+        table.insert(lines, string.format(L.PLAN_CRAFT_LINE, item.toCraft, item.name, recipe.name, requirement, warning))
     end
+    return lines
 end
 
-function PlanText.PrintPlan(plan, char, currentKey)
-    local prof = plan.profession
-    ns:Print(L.PLAN_HEADER, prof.name, plan.from, plan.to)
-    if prof.beta and prof.source then
-        ns:Print(L.PLAN_BETA, prof.source)
+function PlanText.StockLines(plan, currentKey)
+    local lines = {}
+    if #plan.stock == 0 then return lines end
+    table.insert(lines, L.PLAN_STOCK)
+    for _, item in ipairs(plan.stock) do
+        table.insert(lines, string.format(L.PLAN_STOCK_LINE, item.fromStock, item.name, PlanText.Holders(item.holders, currentKey)))
     end
+    return lines
+end
 
-    PrintTrainers(plan, char.faction)
-    for _, tool in ipairs(plan.tools) do
-        if not tool.have then
-            ns:Print(L.PLAN_TOOL_MISSING, tool.name)
-        end
-    end
-
-    PrintSteps(plan)
-    PrintCrafting(plan, char)
-
-    if #plan.stock > 0 then
-        ns:Print(L.PLAN_STOCK)
-        for _, item in ipairs(plan.stock) do
-            ns:Print(L.PLAN_STOCK_LINE, item.fromStock, item.name, PlanText.Holders(item.holders, currentKey))
-        end
-    end
-
-    ns:Print(L.PLAN_SHOPPING)
+function PlanText.ShoppingLines(plan)
+    local lines = { L.PLAN_SHOPPING }
     if #plan.shopping == 0 then
-        ns:Print(L.PLAN_SHOPPING_NONE)
+        table.insert(lines, GREEN .. L.PLAN_SHOPPING_NONE .. END)
     end
     for _, item in ipairs(plan.shopping) do
-        ns:Print(L.PLAN_SHOPPING_LINE, item.missing, item.name, PlanText.Source(item.source))
+        table.insert(lines, string.format(L.PLAN_SHOPPING_LINE, item.missing, item.name, PlanText.Source(item.source)))
     end
-
     if plan.cost > 0 then
-        ns:Print(L.PLAN_COST, ns.Calculator.FormatMoney(plan.cost))
+        table.insert(lines, string.format(L.PLAN_COST, ns.Calculator.FormatMoney(plan.cost)))
     end
     if plan.missingRoute then
-        ns:Print(L.PLAN_MISSING_ROUTE)
+        table.insert(lines, L.PLAN_MISSING_ROUTE)
+    end
+    return lines
+end
+
+---------------------------------------------------------------------------
+-- Combining
+---------------------------------------------------------------------------
+
+-- Appends all lists to `target`. Returns target.
+function PlanText.Append(target, ...)
+    for i = 1, select("#", ...) do
+        for _, line in ipairs((select(i, ...))) do
+            table.insert(target, line)
+        end
+    end
+    return target
+end
+
+-- Prints a whole plan to chat (/gfp plan).
+function PlanText.PrintPlan(plan, char, currentKey)
+    local lines = PlanText.Append({},
+        PlanText.HeaderLines(plan),
+        PlanText.TrainerLines(plan, char.faction),
+        PlanText.ToolLines(plan),
+        PlanText.StepLines(plan),
+        PlanText.CraftingLines(plan, char),
+        PlanText.StockLines(plan, currentKey),
+        PlanText.ShoppingLines(plan))
+    for _, line in ipairs(lines) do
+        ns:Print(line)
     end
 end

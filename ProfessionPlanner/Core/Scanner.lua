@@ -102,6 +102,7 @@ function Scanner.ScanProfessions()
     end
 
     char.professions = found
+    ns:FireCallback("DATA_CHANGED")
 end
 
 ---------------------------------------------------------------------------
@@ -131,6 +132,7 @@ function Scanner.ScanBags()
     local char = Scanner.GetCurrentChar()
     char.bags = CountItems(Compat.GetBagIDs())
     char.bagsTime = time()
+    ns:FireCallback("DATA_CHANGED")
 end
 
 -- The bank can only be read while it is open. If it's closed (or reports
@@ -150,6 +152,7 @@ function Scanner.ScanBank()
     if accountSlots > 0 then
         ns.db.accountBank = { items = accountCounts, time = time() }
     end
+    ns:FireCallback("DATA_CHANGED")
 end
 
 function Scanner.ScanAll()
@@ -189,6 +192,7 @@ ns:RegisterEvent("PLAYER_LEVEL_UP", function(event, newLevel)
     -- so use the level the event gives us.
     local char = Scanner.GetCurrentChar()
     char.level = newLevel or UnitLevel("player")
+    ns:FireCallback("DATA_CHANGED")
 end)
 
 ns:RegisterEvent("BAG_UPDATE", function()

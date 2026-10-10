@@ -8,6 +8,7 @@ local _, ns = ...
 ns.Data.Professions[186] = {
     id = 186,
     name = "Mining",
+    gathering = true,  -- levels by gathering, not crafting
     beta = true,
     source = "Classic rules (no Forever Mining guide yet)",  -- TODO: verify when a Forever guide exists
 

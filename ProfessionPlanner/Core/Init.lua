@@ -85,6 +85,25 @@ function ns:Debounce(key, delay, fn)
 end
 
 ---------------------------------------------------------------------------
+-- Internal callbacks (our own events between modules)
+---------------------------------------------------------------------------
+
+-- "DATA_CHANGED" is fired by the Scanner after every scan, so the window
+-- can refresh itself.
+local callbacks = {}
+
+function ns:RegisterCallback(name, fn)
+    callbacks[name] = callbacks[name] or {}
+    table.insert(callbacks[name], fn)
+end
+
+function ns:FireCallback(name, ...)
+    for _, fn in ipairs(callbacks[name] or {}) do
+        ns:SafeCall(name, fn, ...)
+    end
+end
+
+---------------------------------------------------------------------------
 -- SavedVariables
 ---------------------------------------------------------------------------
 

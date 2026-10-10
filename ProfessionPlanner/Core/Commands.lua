@@ -17,7 +17,7 @@ function Commands.PrintSummary()
     local Scanner = ns.Scanner
     local char = Scanner.GetCurrentChar()
 
-    ns:Print(L.SCAN_CHAR, Scanner.GetCharKey(), char.race or "?", char.class or "?",
+    ns:Print(L.SCAN_CHAR, ns.Planner.DisplayName(Scanner.GetCharKey()), char.race or "?", char.class or "?",
         char.level or 0, char.faction or "?")
 
     -- Professions, sorted by name so the output is stable.
@@ -129,28 +129,15 @@ function Commands.Plan(arg)
 
     -- Make sure the numbers are fresh before planning.
     ns.Scanner.ScanAll()
-    local char, key = ns.Scanner.GetCurrentChar()
-    local state = char.professions[prof.id]
-    local current = state and state.rank or 0
-    local currentMax = state and state.maxRank or 0
-
-    target = tonumber(target) or Calculator.NextMilestone(prof, current)
-    if not target then
+    local key = ns.Scanner.GetCharKey()
+    local result, reason, current, wanted = ns.Planner.Build(key, prof, tonumber(target), "account")
+    if reason == "maxed" then
         ns:Print(L.PLAN_MAXED, prof.name)
-        return
+    elseif reason == "done" then
+        ns:Print(L.PLAN_DONE, prof.name, current, wanted)
+    elseif result then
+        ns.PlanText.PrintPlan(result.plan, result.char, key)
     end
-    if current >= target then
-        ns:Print(L.PLAN_DONE, prof.name, current, target)
-        return
-    end
-
-    local inventories = {
-        current = key,
-        chars = ns.db.chars,
-        accountBank = ns.db.accountBank and ns.db.accountBank.items,
-    }
-    local plan = Calculator.Plan(ns.Data, prof, current, target, inventories, { currentMax = currentMax })
-    ns.PlanText.PrintPlan(plan, char, key)
 end
 
 ---------------------------------------------------------------------------
