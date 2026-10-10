@@ -29,6 +29,13 @@
         "GetContainerNumSlots",
         "GetContainerItemInfo",
         "GetContainerItemLink",
-        "GetSpellInfo"
+        "GetSpellInfo",
+        "loadfile",
+        "os",
+        "describe",
+        "it",
+        "before_each",
+        "LoadAddonFile",
+        "ROOT"
     ]
 }

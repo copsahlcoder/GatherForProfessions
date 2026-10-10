@@ -9,7 +9,7 @@ ns.Data.Professions[186] = {
     id = 186,
     name = "Mining",
     beta = true,
-    source = "Classic rules; no Forever guide yet -- TODO: verify",
+    source = "Classic rules (no Forever Mining guide yet)",  -- TODO: verify when a Forever guide exists
 
     -- Items you must carry to use the profession.
     tools = {

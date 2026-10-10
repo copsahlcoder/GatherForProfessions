@@ -3,7 +3,8 @@
 A WoW Forever (Classic-based, Interface 16001) addon that helps you level
 professions across all characters on your account.
 
-Status: **step b** – scanning (a) and static profession data (b).
+Status: **step c** – scanning (a), profession data (b) and the calculator
+with `/gfp plan` (c).
 
 > WoW Forever is in **beta**. Leveling data comes from
 > <https://www.wow-professions.com/forever> and stops at 225, because the
@@ -42,7 +43,7 @@ Then `/reload` in game picks up your edits.
 | --- | --- |
 | `/gfp` | Open/close the main window (step d) |
 | `/gfp scan` | Rescan this character and print a summary |
-| `/gfp plan <profession>` | Print the shopping list (step c) |
+| `/gfp plan <profession> [target]` | Print route, trainers, what to make and the shopping list. Target defaults to the next milestone (75/150/225/300) |
 | `/gfp reset <name>` or `<name-realm>` | Delete saved data for a character |
 | `/gfp verify` | Check every item/spell ID in `Data/` against the game |
 | `/gfp lookup spell\|item <from> [to]` | Show the names of a range of IDs (max 50), to find the right ID |
@@ -95,6 +96,32 @@ Every reagent needs an entry. The `type` decides the other fields
 `node`, `smelt`, `craft`, `mobdrop`, `vendor` or `other`.
 
 After changing data: `/reload`, then `/gfp verify`.
+
+## How the calculator works
+
+`Core/Calculator.lua` is plain Lua with no WoW calls.
+
+1. It takes the route steps between your skill and the target. A step you
+   are halfway through is scaled down.
+2. It walks the steps in order. Each reagent is taken from what earlier steps
+   made, then from your stock (all characters and the account bank), and the
+   rest is crafted from its own reagents (Bronze Bar → Copper Bar + Tin Bar → ore).
+3. Whatever can't be made is the shopping list, with sources and vendor cost.
+
+## Tests
+
+Install LuaJIT once (`winget install DEVCOM.LuaJIT`), then from the repo root:
+
+```
+luajit ProfessionPlanner/tests/run.lua
+```
+
+- `tests/calculator_spec.lua` tests the calculator with small mock data.
+- `tests/data_spec.lua` checks the real data files: every reagent has a
+  source, routes have no gaps, and Blacksmithing 1-150 matches the guide.
+
+Run the tests after every data change. The specs use busted style
+(`describe`/`it`/`assert.are.equal`), so real busted can run them later.
 
 ## Saved data
 

@@ -100,6 +100,60 @@ function Commands.Reset(arg)
 end
 
 ---------------------------------------------------------------------------
+-- /gfp plan <profession> [target]
+---------------------------------------------------------------------------
+
+local function KnownProfessionNames()
+    local names = {}
+    for _, prof in pairs(ns.Data.Professions) do
+        table.insert(names, prof.name)
+    end
+    table.sort(names)
+    return table.concat(names, ", ")
+end
+
+function Commands.Plan(arg)
+    -- "blacksmithing 225" -> name = "blacksmithing", target = "225"
+    local name, target = string.match(arg or "", "^(.-)%s*(%d*)$")
+    if name == "" then
+        ns:Print(L.PLAN_USAGE, KnownProfessionNames())
+        return
+    end
+
+    local Calculator = ns.Calculator
+    local prof = Calculator.FindProfession(ns.Data, name)
+    if not prof then
+        ns:Print(L.PLAN_UNKNOWN, name, KnownProfessionNames())
+        return
+    end
+
+    -- Make sure the numbers are fresh before planning.
+    ns.Scanner.ScanAll()
+    local char, key = ns.Scanner.GetCurrentChar()
+    local state = char.professions[prof.id]
+    local current = state and state.rank or 0
+    local currentMax = state and state.maxRank or 0
+
+    target = tonumber(target) or Calculator.NextMilestone(prof, current)
+    if not target then
+        ns:Print(L.PLAN_MAXED, prof.name)
+        return
+    end
+    if current >= target then
+        ns:Print(L.PLAN_DONE, prof.name, current, target)
+        return
+    end
+
+    local inventories = {
+        current = key,
+        chars = ns.db.chars,
+        accountBank = ns.db.accountBank and ns.db.accountBank.items,
+    }
+    local plan = Calculator.Plan(ns.Data, prof, current, target, inventories, { currentMax = currentMax })
+    ns.PlanText.PrintPlan(plan, char, key)
+end
+
+---------------------------------------------------------------------------
 -- Dispatcher
 ---------------------------------------------------------------------------
 
@@ -129,11 +183,7 @@ local function HandleCommand(msg)
         ns.Scanner.ScanAll()
         Commands.PrintSummary()
     elseif cmd == "plan" then
-        if ns.PrintPlan then
-            ns.PrintPlan(arg)
-        else
-            ns:Print(L.NOT_READY_PLAN)
-        end
+        Commands.Plan(arg)
     elseif cmd == "reset" then
         Commands.Reset(arg)
     elseif cmd == "verify" then
