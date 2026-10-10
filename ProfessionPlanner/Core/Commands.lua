@@ -44,6 +44,12 @@ function Commands.PrintSummary()
         ns:Print(L.SCAN_BANK_NEVER)
     end
 
+    local accountBank = ns.db.accountBank
+    if accountBank then
+        local different, total = Scanner.CountSummary(accountBank.items)
+        ns:Print(L.SCAN_ACCOUNT_BANK, different, total, FormatDate(accountBank.time))
+    end
+
     local numChars = 0
     for _ in pairs(ns.db.chars) do numChars = numChars + 1 end
     ns:Print(L.SCAN_CHARS_SAVED, numChars)

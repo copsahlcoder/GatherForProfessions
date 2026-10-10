@@ -109,17 +109,22 @@ end
 ---------------------------------------------------------------------------
 
 -- Counts all items in the given containers: returns { [itemID] = count }.
+-- Also returns the total number of slots, so callers can tell
+-- "empty containers" (slots > 0) from "not readable right now" (slots == 0).
 local function CountItems(bagIDs)
     local counts = {}
+    local totalSlots = 0
     for _, bag in ipairs(bagIDs) do
-        for slot = 1, Compat.GetContainerNumSlots(bag) do
+        local numSlots = Compat.GetContainerNumSlots(bag)
+        totalSlots = totalSlots + numSlots
+        for slot = 1, numSlots do
             local itemID, count = Compat.GetContainerItem(bag, slot)
             if itemID then
                 counts[itemID] = (counts[itemID] or 0) + count
             end
         end
     end
-    return counts
+    return counts, totalSlots
 end
 
 function Scanner.ScanBags()
@@ -128,13 +133,23 @@ function Scanner.ScanBags()
     char.bagsTime = time()
 end
 
--- The bank can only be read while it is open. If it's closed we keep the
--- last saved contents instead of overwriting them with nothing.
+-- The bank can only be read while it is open. If it's closed (or reports
+-- no slots yet) we keep the last saved contents instead of overwriting them.
 function Scanner.ScanBank()
     if not Scanner.bankOpen then return end
+
     local char = Scanner.GetCurrentChar()
-    char.bank = CountItems(Compat.GetBankBagIDs())
-    char.bankTime = time()
+    local counts, slots = CountItems(Compat.GetBankBagIDs())
+    if slots > 0 then
+        char.bank = counts
+        char.bankTime = time()
+    end
+
+    -- The account (Warband) bank is shared, so it is saved once for the account.
+    local accountCounts, accountSlots = CountItems(Compat.GetAccountBankBagIDs())
+    if accountSlots > 0 then
+        ns.db.accountBank = { items = accountCounts, time = time() }
+    end
 end
 
 function Scanner.ScanAll()

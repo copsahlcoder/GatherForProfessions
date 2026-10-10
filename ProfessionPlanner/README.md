@@ -51,6 +51,7 @@ ProfessionPlannerDB = {
   version = 1,
   settings = { tooltip = true },
   ui = {},
+  accountBank = { items = { [itemID] = count }, time = <time()> },  -- shared Warband bank
   chars = {
     ["Name-Realm"] = {
       name, realm, race, raceFile, class, classFile, level, faction, lastUpdate,

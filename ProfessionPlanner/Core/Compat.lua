@@ -29,20 +29,27 @@ function Compat.GetBagIDs()
     return ids
 end
 
--- Returns a list of the bank container IDs.
--- Modern clients use bank tabs (Enum.BagIndex.CharacterBankTab_1, _2, ...).
--- Older clients use the main bank (-1) plus bank bags after the equipped bags.
--- TODO: verify in game: /dump Enum.BagIndex
-function Compat.GetBankBagIDs()
+-- Collects Enum.BagIndex[prefix .. 1], [prefix .. 2], ... until one is missing.
+local function GetTabIDs(prefix)
     local ids = {}
-    if BagIndex.CharacterBankTab_1 then
-        local i = 1
-        while BagIndex["CharacterBankTab_" .. i] do
-            table.insert(ids, BagIndex["CharacterBankTab_" .. i])
-            i = i + 1
-        end
-        return ids
+    local i = 1
+    while BagIndex[prefix .. i] do
+        table.insert(ids, BagIndex[prefix .. i])
+        i = i + 1
     end
+    return ids
+end
+
+-- Returns a list of the character's bank container IDs.
+-- WoW Forever uses bank tabs: CharacterBankTab_1..9 = 6..14 (confirmed with /dump).
+-- Note: in this client -1 is the Keyring, not the bank.
+-- Older clients use the main bank (-1) plus bank bags after the equipped bags.
+function Compat.GetBankBagIDs()
+    if BagIndex.CharacterBankTab_1 then
+        return GetTabIDs("CharacterBankTab_")
+    end
+
+    local ids = {}
 
     table.insert(ids, BagIndex.Bank or BANK_CONTAINER or -1)
     local firstBankBag = numEquippedBags + 1
@@ -50,6 +57,12 @@ function Compat.GetBankBagIDs()
         table.insert(ids, bag)
     end
     return ids
+end
+
+-- Returns the account-wide (Warband) bank tab IDs: AccountBankTab_1..9 = 15..23.
+-- Empty list on clients without an account bank.
+function Compat.GetAccountBankBagIDs()
+    return GetTabIDs("AccountBankTab_")
 end
 
 ---------------------------------------------------------------------------
