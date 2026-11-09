@@ -68,6 +68,7 @@ Then `/reload` in game picks up your edits.
 | `/gfp reset <name>` or `<name-realm>` | Delete saved data for a character |
 | `/gfp verify` | Check every item/spell ID in `Data/` against the game |
 | `/gfp lookup spell\|item <from> [to]` | Show the names of a range of IDs (max 50), to find the right ID |
+| `/gfp minimap` | Show/hide the minimap button (click it to open the window, drag it to move it) |
 | `/gfp help` | Show help |
 
 ## Adding or fixing data

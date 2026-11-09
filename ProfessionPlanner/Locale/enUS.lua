@@ -17,7 +17,15 @@ L.HELP_TOGGLE = "  /gfp - open/close the main window"
 L.HELP_SCAN = "  /gfp scan - rescan this character and print a summary"
 L.HELP_PLAN = "  /gfp plan <profession> - print the shopping list for a profession"
 L.HELP_RESET = "  /gfp reset <name> or <name-realm> - delete saved data for a character"
+L.HELP_MINIMAP = "  /gfp minimap - show/hide the minimap button"
 L.HELP_HELP = "  /gfp help - show this help"
+
+-- Minimap button
+L.MINIMAP_TIP_CLICK = "Click: open/close"
+L.MINIMAP_TIP_DRAG = "Drag: move around the minimap"
+L.MINIMAP_TIP_HIDE = "/gfp minimap hides this button"
+L.MINIMAP_HIDDEN = "Minimap button hidden. Type /gfp minimap to show it again."
+L.MINIMAP_SHOWN = "Minimap button shown."
 L.UNKNOWN_COMMAND = "Unknown command '%s'. Type /gfp help."
 
 -- Not built yet
