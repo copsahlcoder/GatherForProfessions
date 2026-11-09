@@ -166,4 +166,17 @@ describe("Plan with real data", function()
         local plan = Calculator.Plan(Data, Data.Professions[197], 200, 300, empty)
         assert.is_true(plan.missingRoute)
     end)
+
+    it("only makes leather from lower leather when asked", function()
+        -- Bronze Shortsword x24 (125-140) needs 48 Medium Leather.
+        local plan = Calculator.Plan(Data, Data.Professions[164], 125, 140, empty)
+        assert.are.equal(48, plan.items[2319].missing)
+        assert.is_nil(plan.items[2318])
+
+        plan = Calculator.Plan(Data, Data.Professions[164], 125, 140, empty, { makeLeather = true })
+        assert.are.equal(0, plan.items[2319].missing)
+        assert.are.equal(48, plan.items[2319].toCraft)
+        assert.are.equal(48 * 4, plan.items[2318].toCraft)      -- Light Leather, made from scraps
+        assert.are.equal(48 * 4 * 3, plan.items[2934].missing)  -- Ruined Leather Scraps
+    end)
 end)

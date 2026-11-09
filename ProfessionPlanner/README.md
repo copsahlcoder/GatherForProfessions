@@ -127,6 +127,8 @@ After changing data: `/reload`, then `/gfp verify`.
 2. It walks the steps in order. Each reagent is taken from what earlier steps
    made, then from your stock (all characters and the account bank), and the
    rest is crafted from its own reagents (Bronze Bar → Copper Bar + Tin Bar → ore).
+   Leather is skinned or bought, unless you pick "Leather: Make from lower" in
+   the window; then Heavy → Medium → Light Leather → Ruined Leather Scraps.
 3. Whatever can't be made is the shopping list, with sources and vendor cost.
 
 ## Tests

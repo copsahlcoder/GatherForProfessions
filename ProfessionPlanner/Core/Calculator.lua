@@ -59,13 +59,21 @@ function Calculator.NextMilestone(prof, skill)
 end
 
 -- Returns the recipe that makes an item (from Sources "craft"/"smelt"), or nil.
-function Calculator.GetSourceRecipe(data, itemID)
+-- With makeLeather, leather with an `upgrade` is made from lower leather too.
+function Calculator.GetSourceRecipe(data, itemID, makeLeather)
     local source = data.Sources[itemID]
-    if not source or (source.type ~= "craft" and source.type ~= "smelt") then
+    if not source then
         return nil
     end
-    local prof = data.Professions[source.profession]
-    return prof and prof.recipes[source.recipe], prof
+    local ref = source
+    if source.type ~= "craft" and source.type ~= "smelt" then
+        if not (makeLeather and source.upgrade) then
+            return nil
+        end
+        ref = source.upgrade
+    end
+    local prof = data.Professions[ref.profession]
+    return prof and prof.recipes[ref.recipe], prof
 end
 
 -- Best known name for an item: Sources first, then any recipe that makes it.
@@ -200,6 +208,8 @@ end
 --   scope      "account" (default) or "character": what stock may be used
 --   currentMax the character's current skill cap (to know which trainers are needed)
 --   points     skill points per craft by colour (default DEFAULT_POINTS)
+--   makeLeather  make leather from lower leather (Sources `upgrade`) instead
+--              of skinning or buying it
 --
 -- Result:
 --   steps     remaining route steps (see GetRemainingSteps)
@@ -272,7 +282,7 @@ function Calculator.Plan(data, prof, current, target, inventories, options)
             return
         end
 
-        local recipe, recipeProf = Calculator.GetSourceRecipe(data, itemID)
+        local recipe, recipeProf = Calculator.GetSourceRecipe(data, itemID, options.makeLeather)
         if recipe then
             local crafts = Ceil(amount / recipe.count)
             item.toCraft = item.toCraft + amount

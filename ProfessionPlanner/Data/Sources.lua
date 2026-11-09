@@ -8,6 +8,8 @@
 --        "mobdrop" Drops from mobs. mobs, zones.
 --        "vendor"  Bought from a vendor. price (copper), vendor.
 --        "other"   Anything else (other professions, Auction House). note.
+--                  Optional upgrade = { profession, recipe }: can be made from
+--                  lower leather (only used with the "make leather" option).
 -- zones = { { zone = "Name", min = minLevel, max = maxLevel }, ... }
 --
 -- Forever is in BETA. Zones and prices are Classic values unless noted.
@@ -169,17 +171,19 @@ S[8925]   = { name = "Crystal Vial",       type = "vendor", price = 500,  vendor
 -- Other professions / Auction House
 ---------------------------------------------------------------------------
 
--- Leather and hides. Leatherworking can also make leather from lower leather
--- (e.g. 4 Light -> 1 Medium), but we keep them as "other" so plans for other
--- professions don't tell you to make leather from scraps. The Leatherworking
--- route makes them in its own steps.
+-- Leather and hides. They are "other" (skin or buy) by default. Leather with
+-- `upgrade` can also be made from lower leather with Leatherworking; the plan
+-- only does that when the "Leather: Make from lower" choice is on.
 -- TODO: verify skinning level ranges for Forever.
 S[2934] = { name = "Ruined Leather Scraps", type = "other", note = "Skinning (beasts level 1-15) or Auction House" }
-S[2318] = { name = "Light Leather",    type = "other", note = "Skinning (beasts level 1-20) or Auction House" }
+S[2318] = { name = "Light Leather",    type = "other", note = "Skinning (beasts level 1-20), Leatherworking (3 Ruined Leather Scraps) or Auction House",
+            upgrade = { profession = 165, recipe = 2881 } }
 S[783]  = { name = "Light Hide",       type = "other", note = "Skinning (beasts level 1-20) or Auction House" }
-S[2319] = { name = "Medium Leather",   type = "other", note = "Skinning (beasts level 20-30), Leatherworking (4 Light Leather) or Auction House" }
+S[2319] = { name = "Medium Leather",   type = "other", note = "Skinning (beasts level 20-30), Leatherworking (4 Light Leather) or Auction House",
+            upgrade = { profession = 165, recipe = 20648 } }
 S[4232] = { name = "Medium Hide",      type = "other", note = "Skinning (beasts level 20-30) or Auction House" }
-S[4234] = { name = "Heavy Leather",    type = "other", note = "Skinning (beasts level 30-40), Leatherworking (5 Medium Leather) or Auction House" }
+S[4234] = { name = "Heavy Leather",    type = "other", note = "Skinning (beasts level 30-40), Leatherworking (5 Medium Leather) or Auction House",
+            upgrade = { profession = 165, recipe = 20649 } }
 S[4235] = { name = "Heavy Hide",       type = "other", note = "Skinning (beasts level 30-40) or Auction House" }
 S[4304] = { name = "Thick Leather",    type = "other", note = "Skinning (beasts level 40-50) or Auction House" }
 

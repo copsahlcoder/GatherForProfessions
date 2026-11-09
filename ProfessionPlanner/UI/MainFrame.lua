@@ -8,7 +8,7 @@ local Widgets = ns.Widgets
 local UI = {}
 ns.UI = UI
 
-local WIDTH, HEIGHT = 620, 480
+local WIDTH, HEIGHT = 620, 506
 local TEXT_WIDTH = WIDTH - 60   -- room for the scroll bar
 local TAB_PLAN, TAB_SHOPPING, TAB_OVERVIEW = 1, 2, 3
 
@@ -42,6 +42,7 @@ local function Settings()
     end
     ui.target = ui.target or "next"
     ui.scope = ui.scope or "account"
+    ui.leather = ui.leather or "skin"
     ui.tab = ui.tab or TAB_PLAN
     return ui
 end
@@ -89,6 +90,13 @@ local function ScopeItems()
     return {
         { value = "account",   text = L.UI_SCOPE_ACCOUNT },
         { value = "character", text = L.UI_SCOPE_CHARACTER },
+    }
+end
+
+local function LeatherItems()
+    return {
+        { value = "skin", text = L.UI_LEATHER_SKIN },
+        { value = "make", text = L.UI_LEATHER_MAKE },
     }
 end
 
@@ -213,11 +221,12 @@ function UI.Refresh()
     controls.prof:SetValue(ui.prof)
     controls.target:SetValue(ui.target)
     controls.scope:SetValue(ui.scope)
+    controls.leather:SetValue(ui.leather)
     controls.tabs:Select(ui.tab)
 
     -- The Overview tab doesn't use the choices above, so hide them there.
     local showChoices = ui.tab ~= TAB_OVERVIEW
-    for _, name in ipairs({ "prof", "target", "scope", "profLabel", "targetLabel", "scopeLabel" }) do
+    for _, name in ipairs({ "prof", "target", "scope", "leather", "profLabel", "targetLabel", "scopeLabel", "leatherLabel" }) do
         controls[name]:SetShown(showChoices)
     end
 
@@ -314,9 +323,18 @@ local function Create()
     controls.scope:SetItems(ScopeItems())
     controls.scope:SetPoint("LEFT", controls.scopeLabel, "RIGHT", 6, 0)
 
+    -- Row 3: skin/buy leather, or make it from lower leather.
+    controls.leather = Widgets.CreateDropdown(frame, 150, function(value)
+        Choose("leather", value)
+    end)
+    controls.leather:SetItems(LeatherItems())
+    controls.leather:SetPoint("TOPLEFT", controls.scope, "BOTTOMLEFT", 0, -4)
+    controls.leatherLabel = Widgets.CreateLabel(frame, L.UI_LEATHER)
+    controls.leatherLabel:SetPoint("RIGHT", controls.leather, "LEFT", -6, 0)
+
     -- The scrolling text for the selected tab.
     controls.text = Widgets.CreateTextArea(frame, TEXT_WIDTH)
-    controls.text:SetPoint("TOPLEFT", 18, -114)
+    controls.text:SetPoint("TOPLEFT", 18, -140)
     controls.text:SetPoint("BOTTOMRIGHT", -34, 14)
 
     frame:SetScript("OnShow", UI.Refresh)

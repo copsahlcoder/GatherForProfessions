@@ -67,6 +67,8 @@ end
 --   prof     profession data table
 --   target   a skill number, or nil for "next milestone"
 --   scope    "account" (all characters + account bank) or "character"
+-- The "Leather" choice in the main window (ui.leather) applies here too,
+-- so /gfp plan and the window give the same answer.
 -- Returns a table { plan, char, key, current, target }, or nil plus a reason:
 --   "nochar" (unknown character), "maxed" (nothing above current skill),
 --   "done" (already at or above target).
@@ -91,7 +93,7 @@ function Planner.Build(charKey, prof, target, scope)
         accountBank = ns.db.accountBank and ns.db.accountBank.items,
     }
     local plan = ns.Calculator.Plan(ns.Data, prof, current, target, inventories,
-        { currentMax = currentMax, scope = scope })
+        { currentMax = currentMax, scope = scope, makeLeather = ns.db.ui.leather == "make" })
 
     return { plan = plan, char = char, key = charKey, current = current, target = target }
 end
