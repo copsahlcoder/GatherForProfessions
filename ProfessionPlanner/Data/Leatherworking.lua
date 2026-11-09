@@ -2,13 +2,15 @@
 -- Pure data, no logic. See README.md for the format.
 --
 -- Source: https://www.wow-professions.com/forever/leatherworking-leveling-guide
--- (read 2026-10-10). Forever is in BETA: the guide stops at 225 and may change.
+-- (read 2026-10-10; 225-300 added 2026-11-07, after launch). The guide marks
+-- 225-300 as untested: it was written during the beta.
+-- 225-300 spell IDs and reagents checked against https://www.wowhead.com/forever/
 local _, ns = ...
 
 ns.Data.Professions[165] = {
     id = 165,
     name = "Leatherworking",
-    beta = true,
+    beta = true,  -- 225-300 untested by the guide
     source = "https://www.wow-professions.com/forever/leatherworking-leveling-guide",
 
     tools = {},
@@ -54,6 +56,21 @@ ns.Data.Professions[165] = {
         [10507] = { name = "Nightscape Headband",      item = 8176, count = 1, learn = "trainer", reagents = { { 4304, 5 }, { 4291, 2 } } },
         [10548] = { name = "Nightscape Pants",         item = 8193, count = 1, learn = "trainer", reagents = { { 4304, 14 }, { 4291, 4 } },
                     note = "Only the Artisan trainers teach this, not the Expert trainers." },
+        [10558] = { name = "Nightscape Boots",         item = 8197, count = 1, learn = "trainer", reagents = { { 4304, 16 }, { 8343, 2 } } },  -- TODO: verify where it's learned
+        [19049] = { name = "Wicked Leather Gauntlets", item = 15083, count = 1, learn = "vendor",
+                    note = "Pattern: Werg Thickblade (Tirisfal Glades) for Horde, Leonard Porter (Western Plaguelands) for Alliance.",
+                    reagents = { { 8170, 8 }, { 2325, 1 }, { 14341, 1 } } },
+        [19082] = { name = "Runic Leather Headband",   item = 15094, count = 1, learn = "vendor",
+                    note = "Pattern: Jase Farlane (Light's Hope Chapel, Eastern Plaguelands).",
+                    reagents = { { 8170, 14 }, { 14047, 10 }, { 14341, 1 } } },
+        [19047] = { name = "Cured Rugged Hide",        item = 15407, count = 1, learn = "trainer", reagents = { { 8171, 1 }, { 15409, 1 } } },  -- TODO: verify where it's learned
+        [19100] = { name = "Heavy Scorpid Shoulders",  item = 15081, count = 1, learn = "drop",
+                    reagents = { { 8170, 14 }, { 15408, 14 }, { 15407, 1 }, { 14341, 2 } } },
+        [19098] = { name = "Wicked Leather Armor",     item = 15085, count = 1, learn = "drop",
+                    reagents = { { 8170, 20 }, { 15407, 2 }, { 14256, 6 }, { 2325, 4 }, { 14341, 2 } } },
+        -- New spell ID in Forever (the Classic one is different).
+        [1255018] = { name = "Tooled Leather Pants",   item = 252560, count = 1, learn = "drop",
+                    reagents = { { 8170, 18 }, { 14341, 1 }, { 6261, 1 }, { 15407, 1 } } },
     },
 
     -- Leveling route. crafts = how many the guide says to make for this step.
@@ -77,6 +94,12 @@ ns.Data.Professions[165] = {
         { from = 175, to = 195, recipe = 7156,  crafts = 26 },
         { from = 195, to = 210, recipe = 10507, crafts = 21 },
         { from = 210, to = 225, recipe = 10548, crafts = 15 },
-        { from = 225, to = 300, missing = true, note = "Artisan route not published for Forever yet (beta)." },
+        { from = 225, to = 235, recipe = 10558, crafts = 12, note = "Untested by the guide from here on (written during the beta)." },
+        { from = 235, to = 250, recipe = 19049, crafts = 15 },
+        { from = 250, to = 265, recipe = 19049, crafts = 21 },
+        { from = 265, to = 285, recipe = 19082, crafts = 20 },
+        { from = 285, to = 300, recipe = 19082, crafts = 33,
+          alternatives = { { recipe = 19100, crafts = 15 }, { recipe = 19098, crafts = 15 }, { recipe = 1255018, crafts = 15 } },
+          note = "The alternatives need patterns you may already have; they also need Cured Rugged Hide." },
     },
 }

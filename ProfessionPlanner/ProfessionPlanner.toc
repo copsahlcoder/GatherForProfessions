@@ -15,6 +15,7 @@ Data\Mining.lua
 Data\Blacksmithing.lua
 Data\Tailoring.lua
 Data\Leatherworking.lua
+Data\Enchanting.lua
 Core\Calculator.lua
 Core\Planner.lua
 Core\PlanText.lua

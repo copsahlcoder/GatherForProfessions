@@ -30,7 +30,8 @@ local function CollectIDs()
             spells[spellID] = recipe.name
             -- Products named in Sources (bars, bolts...) use that name;
             -- other products use itemName, or the recipe name if not set.
-            if not items[recipe.item] then
+            -- Enchants make no item, so there is nothing to check.
+            if recipe.item and not items[recipe.item] then
                 items[recipe.item] = recipe.itemName or recipe.name
             end
             for _, reagent in ipairs(recipe.reagents) do

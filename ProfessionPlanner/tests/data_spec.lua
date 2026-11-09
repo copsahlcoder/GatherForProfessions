@@ -9,18 +9,19 @@ end
 
 local ns = { Data = { Professions = {}, Sources = {} } }
 for _, file in ipairs({ "Data/Sources.lua", "Data/Mining.lua", "Data/Blacksmithing.lua",
-                        "Data/Tailoring.lua", "Data/Leatherworking.lua" }) do
+                        "Data/Tailoring.lua", "Data/Leatherworking.lua", "Data/Enchanting.lua" }) do
     LoadFile(file, ns)
 end
 LoadFile("Core/Calculator.lua", ns)
 local Data, Calculator = ns.Data, ns.Calculator
 
 describe("Data files", function()
-    it("load Mining, Blacksmithing, Tailoring and Leatherworking", function()
+    it("load Mining, Blacksmithing, Tailoring, Leatherworking and Enchanting", function()
         assert.is_not_nil(Data.Professions[186])
         assert.is_not_nil(Data.Professions[164])
         assert.is_not_nil(Data.Professions[197])
         assert.is_not_nil(Data.Professions[165])
+        assert.is_not_nil(Data.Professions[333])
     end)
 
     for id, prof in pairs(Data.Professions) do
@@ -96,9 +97,38 @@ describe("Plan with real data", function()
         assert.are.equal(72, plan.items[2836].missing)
         assert.are.equal(60, plan.items[2838].missing)
         assert.are.equal(96, plan.items[2880].missing)
-        -- 114 Copper Bar for gear + 380 Bronze Bar (190 smelts = 190 more copper bars).
-        assert.are.equal(114 + 190, plan.items[2770].missing)  -- Copper Ore
-        assert.are.equal(190, plan.items[2771].missing)        -- Tin Ore
+        -- 294 Copper Bar for gear + 290 Bronze Bar (145 smelts = 145 more copper bars).
+        assert.are.equal(294 + 145, plan.items[2770].missing)  -- Copper Ore
+        assert.are.equal(145, plan.items[2771].missing)        -- Tin Ore
+    end)
+
+    it("Blacksmithing 225-300 matches the guide's totals", function()
+        local plan = Calculator.Plan(Data, Data.Professions[164], 225, 300, empty)
+        -- Guide: 1910 Thorium Bar incl. 140 for the quests (not counted by us).
+        assert.are.equal(1910 - 140, plan.items[10620].missing)  -- Thorium Ore (1 per bar)
+        assert.are.equal(224, plan.items[3858].missing)          -- Mithril Ore
+        assert.are.equal(5, plan.items[12365].missing)           -- Dense Stone
+        assert.are.equal(64, plan.items[4304].missing)           -- Thick Leather
+        assert.are.equal(30, plan.items[8170].missing)           -- Rugged Leather
+        assert.are.equal(67, plan.items[7910].missing)           -- Star Ruby
+        assert.are.equal(25, plan.items[7909].missing)           -- Aquamarine
+    end)
+
+    it("Tailoring 225-265 needs the guide's 1220 Runecloth", function()
+        local plan = Calculator.Plan(Data, Data.Professions[197], 225, 265, empty)
+        assert.are.equal(1220, plan.items[14047].missing)
+        assert.are.equal(172, plan.items[8170].missing)   -- Rugged Leather
+        assert.are.equal(244, plan.items[14048].toCraft)  -- Bolt of Runecloth
+    end)
+
+    it("Enchanting 1-300 matches the guide's shopping list", function()
+        local plan = Calculator.Plan(Data, Data.Professions[333], 1, 300, empty)
+        assert.is_nil(plan.missingRoute)
+        assert.are.equal(19, plan.items[247786].missing)       -- Mote of Magic
+        assert.are.equal(46 + 75, plan.items[11137].missing)   -- Vision Dust (1-225 + 225-300)
+        assert.are.equal(212, plan.items[11176].missing)       -- Dream Dust
+        assert.are.equal(50, plan.items[16204].missing)        -- Illusion Dust
+        assert.are.equal(39, plan.items[11083].missing)        -- Soul Dust
     end)
 
     it("Tailoring 1-30 needs 60 Linen Cloth", function()
@@ -132,8 +162,8 @@ describe("Plan with real data", function()
         assert.is_not_nil(plan.steps[1].step.gather)
     end)
 
-    it("Blacksmithing to 300 flags the missing Artisan route", function()
-        local plan = Calculator.Plan(Data, Data.Professions[164], 200, 300, empty)
+    it("Tailoring to 300 flags the missing 265-300 route", function()
+        local plan = Calculator.Plan(Data, Data.Professions[197], 200, 300, empty)
         assert.is_true(plan.missingRoute)
     end)
 end)

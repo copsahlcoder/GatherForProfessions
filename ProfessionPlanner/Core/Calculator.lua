@@ -215,10 +215,11 @@ end
 --   tools     { item, name, have }
 --   cost      estimated vendor cost in copper
 --   missingRoute  true if a part of the range has no route data yet
+--   scope     the scope the plan was made with
 function Calculator.Plan(data, prof, current, target, inventories, options)
     options = options or {}
     local result = {
-        profession = prof, from = current, to = target,
+        profession = prof, from = current, to = target, scope = options.scope or "account",
         items = {}, shopping = {}, crafting = {}, stock = {},
         trainers = {}, recipes = {}, tools = {}, cost = 0,
     }
@@ -230,7 +231,7 @@ function Calculator.Plan(data, prof, current, target, inventories, options)
     --   stock = what the player owns (counts as "fromStock")
     --   made  = what this plan makes along the way: products of earlier route
     --           steps and leftovers from recipes that make more than one.
-    local stock = Calculator.BuildPool(inventories, options.scope or "account")
+    local stock = Calculator.BuildPool(inventories, result.scope)
     local made = {}
 
     local function GetItem(itemID)
@@ -300,7 +301,10 @@ function Calculator.Plan(data, prof, current, target, inventories, options)
             for _, reagent in ipairs(recipe.reagents) do
                 Need(reagent[1], reagent[2] * entry.crafts, 1)
             end
-            made[recipe.item] = (made[recipe.item] or 0) + entry.crafts * recipe.count
+            -- Enchants make no item.
+            if recipe.item then
+                made[recipe.item] = (made[recipe.item] or 0) + entry.crafts * recipe.count
+            end
             if not seenRecipe[entry.recipeID] then
                 seenRecipe[entry.recipeID] = true
                 table.insert(result.recipes, { recipeID = entry.recipeID, recipe = recipe })

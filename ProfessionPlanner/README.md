@@ -1,16 +1,19 @@
 # ProfessionPlanner
 
-A WoW Forever (Classic-based, Interface 16001) addon that helps you level
-professions across all characters on your account.
+A WoW Forever addon (Interface 16001, client 1.60.1) that helps you level
+professions across all characters on your account. Forever runs on the
+modern client and API, with Classic-style content.
 
 Status: **step d** – scanning (a), profession data (b), the calculator
 with `/gfp plan` (c) and the main window (d).
 
-> WoW Forever is in **beta**. Leveling data comes from
-> <https://www.wow-professions.com/forever> and stops at 225, because the
-> Artisan routes are not published yet. Professions with data: Mining,
-> Blacksmithing, Tailoring and Leatherworking. Mining has no Forever guide yet and
-> uses Classic rules. Anything uncertain is marked `-- TODO: verify`.
+> Leveling data comes from <https://www.wow-professions.com/forever>, with
+> spell IDs and reagents checked against <https://www.wowhead.com/forever/>.
+> Professions with data: Mining, Blacksmithing, Tailoring, Leatherworking and
+> Enchanting, all 1-300 except Tailoring 265-300 (no route published yet).
+> The guides were written during the beta and mark the Artisan part (225-300)
+> as untested on live. Mining has no Forever guide yet and uses Classic rules.
+> Anything uncertain is marked `-- TODO: verify`.
 
 ## Installation
 

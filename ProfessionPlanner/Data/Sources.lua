@@ -70,6 +70,7 @@ S[3858]  = { name = "Mithril Ore",    type = "node", node = "Mithril Deposit",  
 S[7912]  = { name = "Solid Stone",    type = "node", node = "Mithril Deposit",   skill = 175, zones = MITHRIL_ZONES }
 S[7911]  = { name = "Truesilver Ore", type = "node", node = "Truesilver Deposit", skill = 230, zones = MITHRIL_ZONES }
 S[10620] = { name = "Thorium Ore",    type = "node", node = "Small Thorium Vein", skill = 245, zones = THORIUM_ZONES }
+S[12365] = { name = "Dense Stone",    type = "node", node = "Small Thorium Vein", skill = 245, zones = THORIUM_ZONES }
 
 ---------------------------------------------------------------------------
 -- Bars (smelted with Mining, recipes in Data/Mining.lua)
@@ -94,17 +95,20 @@ S[3470] = { name = "Rough Grinding Stone",  type = "craft", profession = 164, re
 S[3478] = { name = "Coarse Grinding Stone", type = "craft", profession = 164, recipe = 3326 }
 S[3486] = { name = "Heavy Grinding Stone",  type = "craft", profession = 164, recipe = 3337 }
 S[7966] = { name = "Solid Grinding Stone",  type = "craft", profession = 164, recipe = 9920 }
+S[12644] = { name = "Dense Grinding Stone", type = "craft", profession = 164, recipe = 16639 }
 
 S[2996] = { name = "Bolt of Linen Cloth",   type = "craft", profession = 197, recipe = 2963 }
 S[2997] = { name = "Bolt of Woolen Cloth",  type = "craft", profession = 197, recipe = 2964 }
 S[4305] = { name = "Bolt of Silk Cloth",    type = "craft", profession = 197, recipe = 3839 }
 S[4339] = { name = "Bolt of Mageweave",     type = "craft", profession = 197, recipe = 3865,
             note = "Mageweave is rare on beta; the guide suggests buying bolts on the Auction House." }
+S[14048] = { name = "Bolt of Runecloth",    type = "craft", profession = 197, recipe = 18401 }
 
 S[4231] = { name = "Cured Light Hide",      type = "craft", profession = 165, recipe = 3816 }
 S[4233] = { name = "Cured Medium Hide",     type = "craft", profession = 165, recipe = 3817 }
 S[4236] = { name = "Cured Heavy Hide",      type = "craft", profession = 165, recipe = 3818 }
 S[4246] = { name = "Fine Leather Belt",     type = "craft", profession = 165, recipe = 3763 }
+S[15407] = { name = "Cured Rugged Hide",    type = "craft", profession = 165, recipe = 19047 }
 
 ---------------------------------------------------------------------------
 -- Cloth (drops from humanoid mobs)
@@ -123,6 +127,11 @@ S[4306] = { name = "Silk Cloth", type = "mobdrop", mobs = "Humanoids level 25-40
 S[4338] = { name = "Mageweave Cloth", type = "mobdrop", mobs = "Humanoids level 40+ (Forever guide)",
     zones = { { zone = "Tanaris", min = 40, max = 50 }, { zone = "The Hinterlands", min = 40, max = 50 },
               { zone = "Feralas", min = 40, max = 50 } } }
+S[14047] = { name = "Runecloth", type = "mobdrop", mobs = "Humanoids level 50-60",
+    zones = { { zone = "Winterspring", min = 53, max = 60 }, { zone = "Eastern Plaguelands", min = 53, max = 60 },
+              { zone = "Western Plaguelands", min = 51, max = 58 }, { zone = "Burning Steppes", min = 50, max = 58 } } }
+S[14256] = { name = "Felcloth", type = "mobdrop", mobs = "Satyrs and demons level 50+, or Auction House",
+    zones = { { zone = "Felwood", min = 48, max = 55 }, { zone = "Winterspring", min = 53, max = 60 } } }
 
 ---------------------------------------------------------------------------
 -- Vendor items. price in copper.
@@ -144,6 +153,18 @@ S[3857] = { name = "Coal",                 type = "vendor", price = 500,  vendor
 S[5956] = { name = "Blacksmith Hammer",    type = "vendor", price = 16,   vendor = "Blacksmithing / Trade Supplies vendors" }
 S[2901] = { name = "Mining Pick",          type = "vendor", price = 81,   vendor = "Mining Supplies, next to most Mining trainers" }
 
+-- Added after launch. Prices are 4x the sell price on Wowhead (the usual
+-- vendor markup). TODO: verify in game.
+S[14341]  = { name = "Rune Thread",        type = "vendor", price = 5000, vendor = "Tailoring / Leatherworking Supplies" }
+S[2325]   = { name = "Black Dye",          type = "vendor", price = 1000, vendor = "Tailoring / Leatherworking Supplies" }
+S[6261]   = { name = "Orange Dye",         type = "vendor", price = 1000, vendor = "Tailoring / Leatherworking Supplies" }
+S[247786] = { name = "Mote of Magic",      type = "vendor", price = 4,    vendor = "Enchanting Supplies, next to most Enchanting trainers" }  -- new in Forever
+S[6217]   = { name = "Copper Rod",         type = "vendor", price = 96,   vendor = "Enchanting Supplies, next to most Enchanting trainers" }
+S[17034]  = { name = "Maple Seed",         type = "vendor", price = 200,  vendor = "Reagent vendors" }
+S[17035]  = { name = "Stranglethorn Seed", type = "vendor", price = 4,    vendor = "Reagent vendors" }
+S[3372]   = { name = "Leaded Vial",        type = "vendor", price = 40,   vendor = "Alchemy Supplies" }
+S[8925]   = { name = "Crystal Vial",       type = "vendor", price = 500,  vendor = "Alchemy Supplies; Mishta (Cenarion Hold, Silithus)" }
+
 ---------------------------------------------------------------------------
 -- Other professions / Auction House
 ---------------------------------------------------------------------------
@@ -162,6 +183,50 @@ S[4234] = { name = "Heavy Leather",    type = "other", note = "Skinning (beasts 
 S[4235] = { name = "Heavy Hide",       type = "other", note = "Skinning (beasts level 30-40) or Auction House" }
 S[4304] = { name = "Thick Leather",    type = "other", note = "Skinning (beasts level 40-50) or Auction House" }
 
+S[8170]  = { name = "Rugged Leather",   type = "other", note = "Skinning (beasts level 45-60) or Auction House" }
+S[8171]  = { name = "Rugged Hide",      type = "other", note = "Skinning (beasts level 45-60) or Auction House" }
+S[15408] = { name = "Heavy Scorpid Scale", type = "other", note = "Skinning scorpids in Silithus and Burning Steppes, or Auction House" }
+S[15409] = { name = "Refined Deeprock Salt", type = "other", note = "Salt Shaker (Leatherworking) from Deeprock Salt, or Auction House" }
+
 S[3383] = { name = "Elixir of Wisdom", type = "other", note = "Alchemy or Auction House" }
+S[8831] = { name = "Purple Lotus",     type = "other", note = "Herbalism or Auction House" }
 S[1206] = { name = "Moss Agate",       type = "other", note = "Mining (Tin and Silver veins) or Auction House" }
 S[7071] = { name = "Iron Buckle",      type = "other", note = "Blacksmithing or Auction House" }
+
+-- Gems and pearls. TODO: verify sources for Forever.
+S[1210]  = { name = "Shadowgem",       type = "other", note = "Mining (Tin veins) or Auction House" }
+S[7909]  = { name = "Aquamarine",      type = "other", note = "Mining (Mithril and Truesilver deposits) or Auction House" }
+S[7910]  = { name = "Star Ruby",       type = "other", note = "Mining (Mithril, Truesilver and Thorium) or Auction House" }
+S[12799] = { name = "Large Opal",      type = "other", note = "Mining (Thorium veins) or Auction House" }
+S[5500]  = { name = "Iridescent Pearl", type = "other", note = "Clams (fishing and mobs level 20-35) or Auction House" }
+S[7971]  = { name = "Black Pearl",     type = "other", note = "Clams (mobs level 35-50) or Auction House" }
+S[13926] = { name = "Golden Pearl",    type = "other", note = "Clams (mobs level 50+) or Auction House" }
+
+-- Rods for the Enchanting runed rods. Blacksmiths make them, but we keep them
+-- as "other" so an Enchanting plan doesn't tell you to smith them yourself.
+S[6338]  = { name = "Silver Rod",      type = "other", note = "Blacksmithing or Auction House" }
+S[11128] = { name = "Golden Rod",      type = "other", note = "Blacksmithing or Auction House" }
+S[11144] = { name = "Truesilver Rod",  type = "other", note = "Blacksmithing or Auction House" }
+S[16206] = { name = "Arcanite Rod",    type = "other", note = "Blacksmithing or Auction House" }
+
+---------------------------------------------------------------------------
+-- Enchanting materials (disenchanting green items, or the Auction House).
+-- Item levels are Classic values. TODO: verify for Forever.
+---------------------------------------------------------------------------
+
+local function Disenchant(levels)
+    return "Disenchant green items (item level " .. levels .. ") or Auction House"
+end
+
+S[10940] = { name = "Strange Dust",           type = "other", note = Disenchant("5-25") }
+S[11083] = { name = "Soul Dust",              type = "other", note = Disenchant("26-35") }
+S[11137] = { name = "Vision Dust",            type = "other", note = Disenchant("36-45") }
+S[11176] = { name = "Dream Dust",             type = "other", note = Disenchant("46-55") }
+S[16204] = { name = "Illusion Dust",          type = "other", note = Disenchant("56-65") }
+S[10938] = { name = "Lesser Magic Essence",   type = "other", note = Disenchant("5-15") .. "; 1 Greater Magic Essence splits into 3" }
+S[11082] = { name = "Greater Astral Essence", type = "other", note = Disenchant("26-30") }
+S[11135] = { name = "Greater Mystic Essence", type = "other", note = Disenchant("36-40") }
+S[11174] = { name = "Lesser Nether Essence",  type = "other", note = Disenchant("41-45") }
+S[16203] = { name = "Greater Eternal Essence", type = "other", note = Disenchant("56-65") }
+S[14343] = { name = "Small Brilliant Shard",  type = "other", note = "Disenchant blue items (item level 51-55), or Auction House" }
+S[14344] = { name = "Large Brilliant Shard",  type = "other", note = "Disenchant blue items (item level 56-65), or Auction House" }
