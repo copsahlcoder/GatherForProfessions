@@ -12,7 +12,6 @@ local MAX_ZONES = 3
 -- Colours used in the window and chat.
 local GREY = "|cff808080"
 local YELLOW = "|cffffd100"
-local GREEN = "|cff40ff40"
 local END = "|r"
 
 ---------------------------------------------------------------------------
@@ -27,17 +26,68 @@ function PlanText.ShortName(key, currentKey)
     return ns.Planner.DisplayName(key)
 end
 
--- "Bankalt bank 40, you bags 5"
-function PlanText.Holders(holders, currentKey)
-    local parts = {}
+-- True if the plan may use what this holder has (scope "character" only
+-- counts the character we plan for).
+local function IsCounted(holder, scope, currentKey)
+    return scope ~= "character" or holder.who == currentKey
+end
+
+-- "you: bags 8, bank 2; Bankalt: bank 40; Warband bank 10"
+-- You first, then the others by biggest stack, then the Warband bank.
+-- Holders the plan doesn't count (scope "character") are marked.
+function PlanText.Holders(holders, currentKey, scope)
+    local byChar, order, account = {}, {}, nil
     for _, holder in ipairs(holders) do
         if holder.where == "accountBank" then
-            table.insert(parts, string.format(L.HOLDER_ACCOUNT, holder.count))
+            account = holder
         else
-            table.insert(parts, string.format(L.HOLDER, PlanText.ShortName(holder.who, currentKey), holder.where, holder.count))
+            if not byChar[holder.who] then
+                byChar[holder.who] = {}
+                table.insert(order, holder.who)
+            end
+            byChar[holder.who][holder.where] = holder.count
         end
     end
-    return table.concat(parts, ", ")
+    for i, key in ipairs(order) do
+        if key == currentKey then
+            table.remove(order, i)
+            table.insert(order, 1, key)
+            break
+        end
+    end
+
+    local parts = {}
+    for _, key in ipairs(order) do
+        local where = {}
+        if byChar[key].bags then table.insert(where, string.format(L.HOLDER_BAGS, byChar[key].bags)) end
+        if byChar[key].bank then table.insert(where, string.format(L.HOLDER_BANK, byChar[key].bank)) end
+        local text = string.format(L.HOLDER_CHAR, PlanText.ShortName(key, currentKey), table.concat(where, ", "))
+        if not IsCounted({ who = key }, scope, currentKey) then
+            text = text .. L.HOLDER_NOT_COUNTED
+        end
+        table.insert(parts, text)
+    end
+    if account then
+        local text = string.format(L.HOLDER_ACCOUNT, account.count)
+        if scope == "character" then
+            text = text .. L.HOLDER_NOT_COUNTED
+        end
+        table.insert(parts, text)
+    end
+    return table.concat(parts, L.HOLDER_SEPARATOR)
+end
+
+-- How many of an item the plan may use (what the counted holders have).
+local function CountedOwned(holders, currentKey, scope)
+    local total = 0
+    for _, holder in ipairs(holders) do
+        if holder.where == "accountBank" then
+            if scope ~= "character" then total = total + holder.count end
+        elseif IsCounted(holder, scope, currentKey) then
+            total = total + holder.count
+        end
+    end
+    return total
 end
 
 -- "Durotar (1-10), Mulgore (1-10), Tirisfal Glades (1-10)"
@@ -91,8 +141,8 @@ end
 function PlanText.HeaderLines(plan)
     local prof = plan.profession
     local lines = { string.format(L.PLAN_HEADER, prof.name, plan.from, plan.to) }
-    if prof.beta and prof.source then
-        table.insert(lines, string.format(L.PLAN_BETA, prof.source))
+    if prof.source then
+        table.insert(lines, string.format(L.PLAN_GUIDE, prof.source))
     end
     return lines
 end
@@ -191,52 +241,111 @@ function PlanText.ProgressLines(prof, current, target)
     return lines
 end
 
--- Intermediate items to make, with a warning if the skill is too low.
-function PlanText.CraftingLines(plan, char)
-    local lines = {}
-    if #plan.crafting == 0 then return lines end
-    table.insert(lines, L.PLAN_CRAFTING)
-    for _, item in ipairs(plan.crafting) do
-        local recipe, prof = item.recipe, item.recipeProfession
-        local known = char.professions and char.professions[prof.id]
-        -- minSkill is only known for some recipes (e.g. smelting).
-        local requirement = prof.name
-        if recipe.minSkill then
-            requirement = string.format(L.PLAN_CRAFT_SKILL, prof.name, recipe.minSkill)
+-- "make 54 (Smelt Copper)", with a warning if the character's skill is too low.
+local function MakeText(item, char)
+    local recipe, prof = item.recipe, item.recipeProfession
+    local text = string.format(L.MAT_MAKE, item.toCraft, recipe.name)
+    local known = char and char.professions and char.professions[prof.id]
+    local rank = known and known.rank or 0
+    -- minSkill is only known for some recipes (e.g. smelting).
+    local needed = recipe.minSkill or 1
+    if rank < needed then
+        text = text .. string.format(L.MAT_MAKE_SKILL_LOW, prof.name, needed, rank)
+    end
+    return text
+end
+
+-- "64 Copper Ore" or "32 Copper Bar, 32 Tin Bar": what making an item takes.
+-- Recipes that make more than one (Smelt Bronze makes 2) need fewer crafts.
+local function ReagentsText(item)
+    local crafts = math.ceil(item.toCraft / item.recipe.count)
+    local parts = {}
+    for _, reagent in ipairs(item.recipe.reagents) do
+        local name = ns.Calculator.GetItemName(ns.Data, reagent[1])
+        table.insert(parts, string.format(L.MAT_FROM_PART, reagent[2] * crafts, name))
+    end
+    return table.concat(parts, ", ")
+end
+
+-- Sort order: missing first, then things to make, then ready; then by name.
+local function Rank(item)
+    if item.missing > 0 then return 1 end
+    if item.toCraft > 0 then return 2 end
+    return 3
+end
+
+-- Every material the plan uses (not counting what earlier steps make), as:
+--   Coarse Stone: have 20, need 72 - missing 52
+--         Where: you: bags 12, bank 8; Bankalt: bank 40
+--         Get: mine Tin Vein (Mining 65): Hillsbrad Foothills (20-30), ...
+function PlanText.MaterialLines(plan, char, currentKey, header)
+    local lines = { header }
+    local rows = {}
+    for _, item in pairs(plan.items) do
+        if item.required - item.fromMade > 0 then
+            table.insert(rows, item)
         end
-        local warning = ""
-        if not known or known.rank < (recipe.minSkill or 1) then
-            warning = string.format(L.PLAN_CRAFT_SKILL_LOW, prof.name, known and known.rank or 0)
+    end
+    table.sort(rows, function(a, b)
+        if Rank(a) ~= Rank(b) then return Rank(a) < Rank(b) end
+        return a.name < b.name
+    end)
+    if #rows == 0 then
+        table.insert(lines, L.MAT_NONE)
+        return lines
+    end
+
+    for _, item in ipairs(rows) do
+        local status
+        if item.missing > 0 then
+            status = string.format(L.MAT_MISSING, item.missing)
+        elseif item.toCraft > 0 then
+            status = MakeText(item, char)
+        else
+            status = L.MAT_READY
         end
-        table.insert(lines, string.format(L.PLAN_CRAFT_LINE, item.toCraft, item.name, recipe.name, requirement, warning))
+        local have = CountedOwned(item.holders, currentKey, plan.scope)
+        table.insert(lines, string.format(L.MAT_LINE, item.name, have, item.required - item.fromMade, status))
+        if #item.holders > 0 then
+            table.insert(lines, string.format(L.MAT_WHERE, PlanText.Holders(item.holders, currentKey, plan.scope)))
+        end
+        if item.toCraft > 0 then
+            table.insert(lines, string.format(L.MAT_FROM, ReagentsText(item)))
+        end
+        if item.missing > 0 then
+            table.insert(lines, string.format(L.MAT_GET, PlanText.Source(item.source)))
+        end
     end
     return lines
 end
 
-function PlanText.StockLines(plan, currentKey)
+-- Vendor cost and a warning when part of the route has no data.
+function PlanText.FooterLines(plan)
     local lines = {}
-    if #plan.stock == 0 then return lines end
-    table.insert(lines, L.PLAN_STOCK)
-    for _, item in ipairs(plan.stock) do
-        table.insert(lines, string.format(L.PLAN_STOCK_LINE, item.fromStock, item.name, PlanText.Holders(item.holders, currentKey)))
-    end
-    return lines
-end
-
-function PlanText.ShoppingLines(plan)
-    local lines = { L.PLAN_SHOPPING }
-    if #plan.shopping == 0 then
-        table.insert(lines, GREEN .. L.PLAN_SHOPPING_NONE .. END)
-    end
-    for _, item in ipairs(plan.shopping) do
-        table.insert(lines, string.format(L.PLAN_SHOPPING_LINE, item.missing, item.name, PlanText.Source(item.source)))
-    end
     if plan.cost > 0 then
         table.insert(lines, string.format(L.PLAN_COST, ns.Calculator.FormatMoney(plan.cost)))
     end
     if plan.missingRoute then
         table.insert(lines, L.PLAN_MISSING_ROUTE)
     end
+    return lines
+end
+
+-- Do you have everything for the target? If not, what is missing (details
+-- are in the Shopping list tab).
+function PlanText.SummaryLines(plan)
+    -- Gathering professions level by gathering; there is nothing to buy.
+    if plan.profession.gathering then
+        return {}
+    end
+    if #plan.shopping == 0 then
+        return { string.format(L.MAT_SUMMARY_OK, plan.to) }
+    end
+    local lines = { string.format(L.MAT_SUMMARY_MISSING, plan.to) }
+    for _, item in ipairs(plan.shopping) do
+        table.insert(lines, string.format(L.MAT_SUMMARY_LINE, item.missing, item.name))
+    end
+    table.insert(lines, L.MAT_SUMMARY_DETAILS)
     return lines
 end
 
@@ -261,9 +370,8 @@ function PlanText.PrintPlan(plan, char, currentKey)
         PlanText.TrainerLines(plan, char.faction),
         PlanText.ToolLines(plan),
         PlanText.StepLines(plan),
-        PlanText.CraftingLines(plan, char),
-        PlanText.StockLines(plan, currentKey),
-        PlanText.ShoppingLines(plan))
+        PlanText.MaterialLines(plan, char, currentKey, string.format(L.MAT_HEADER_TOTAL, plan.to)),
+        PlanText.FooterLines(plan))
     for _, line in ipairs(lines) do
         ns:Print(line)
     end

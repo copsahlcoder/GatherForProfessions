@@ -50,6 +50,18 @@ function Planner.MainProfession(charKey)
     return bestID
 end
 
+-- Where the route step the character is on ends (capped at target).
+-- Returns nil if that step has no recipe (gathering or no route data).
+function Planner.StepEnd(prof, current, target)
+    for _, step in ipairs(prof.route) do
+        if step.from <= current and current < step.to then
+            if not step.recipe then return nil end
+            return math.min(step.to, target)
+        end
+    end
+    return nil
+end
+
 -- Builds a plan for any saved character.
 --   charKey  "Name-Realm"
 --   prof     profession data table

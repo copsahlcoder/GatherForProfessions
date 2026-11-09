@@ -126,13 +126,22 @@ local function PlanTabLines(ui)
     end
     local plan, char = result.plan, result.char
     local PlanText = ns.PlanText
-    return PlanText.Append({},
+    local lines = PlanText.Append({},
         PlanText.HeaderLines(plan),
         { "" },
         PlanText.TrainerLines(plan, char.faction),
         PlanText.ToolLines(plan),
         { "" },
         PlanText.ProgressLines(plan.profession, result.current, result.target))
+
+    -- Materials for the step you are on, then one line for the whole way.
+    local stepEnd = ns.Planner.StepEnd(plan.profession, result.current, result.target)
+    local stepResult = stepEnd and ns.Planner.Build(ui.char, plan.profession, stepEnd, ui.scope)
+    if stepResult then
+        local header = string.format(L.MAT_HEADER_STEP, result.current, stepEnd)
+        PlanText.Append(lines, { "" }, PlanText.MaterialLines(stepResult.plan, char, ui.char, header))
+    end
+    return PlanText.Append(lines, { "" }, PlanText.SummaryLines(plan))
 end
 
 local function ShoppingTabLines(ui)
@@ -145,11 +154,9 @@ local function ShoppingTabLines(ui)
     local lines = PlanText.Append({},
         PlanText.HeaderLines(plan),
         { "" },
-        PlanText.CraftingLines(plan, char),
+        PlanText.MaterialLines(plan, char, ui.char, string.format(L.MAT_HEADER_TOTAL, plan.to)),
         { "" },
-        PlanText.StockLines(plan, ui.char),
-        { "" },
-        PlanText.ShoppingLines(plan))
+        PlanText.FooterLines(plan))
     -- Bank data is only as fresh as the last bank visit.
     table.insert(lines, "")
     table.insert(lines, string.format(L.UI_BANK_SEEN, DateText(char.bankTime)))
